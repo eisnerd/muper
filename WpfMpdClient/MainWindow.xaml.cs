@@ -28,6 +28,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using GongSolutions.Wpf.DragDrop;
 using Libmpc;
 using System.Net;
 using System.Timers;
@@ -36,7 +37,6 @@ using System.ComponentModel;
 using CsUpdater;
 using System.Reflection;
 using System.Collections.ObjectModel;
-using WPF.JoshSmith.ServiceProviders.UI;
 
 namespace WpfMpdClient
 {
@@ -99,7 +99,6 @@ namespace WpfMpdClient
     WindowState m_StoredWindowState = WindowState.Normal;
     bool m_Close = false;
     bool m_IgnoreDisconnect = false;
-    ListViewDragDropManager<MpdFile> m_DragDropManager = null;
     MiniPlayerWindow m_MiniPlayer = null;
     List<string> m_Languages = new List<string>() { string.Empty, "fr", "de", "it", "jp", "pl", "pt", "ru", "es", "sv", "tr" };
 
@@ -107,11 +106,70 @@ namespace WpfMpdClient
     ObservableCollection<ListboxEntry> m_ArtistsSource = new ObservableCollection<ListboxEntry>();
     ObservableCollection<ListboxEntry> m_AlbumsSource = new ObservableCollection<ListboxEntry>();
     ObservableCollection<ListboxEntry> m_GenresAlbumsSource = new ObservableCollection<ListboxEntry>();
-    ObservableCollection<MpdFile> m_PlaylistTracks = new ObservableCollection<MpdFile>();
     ObservableCollection<MpdMessage> m_Messages = new ObservableCollection<MpdMessage>();
     ObservableCollection<MpdChannel> m_Channels = new ObservableCollection<MpdChannel>();
     List<Expander> m_MessagesExpanders = new List<Expander>();
     #endregion
+
+    public class Context : GongSolutions.Wpf.DragDrop.IDropTarget, GongSolutions.Wpf.DragDrop.IDragSource
+    {
+        public ObservableCollection<MpdFile> Playlist { get; set; }
+
+        readonly Mpc m_Mpc = null;
+        public Context(Mpc m_Mpc)
+        { this.m_Mpc = m_Mpc; }
+
+        void GongSolutions.Wpf.DragDrop.IDropTarget.DragOver(GongSolutions.Wpf.DragDrop.IDropInfo dropInfo)
+        {
+            dropInfo.Effects = dropInfo.TargetItem is MpdFile || dropInfo.TargetItem is IEnumerable<MpdFile>
+                ? DragDropEffects.Move
+                : DragDropEffects.None;
+            dropInfo.DropTargetAdorner = GongSolutions.Wpf.DragDrop.DropTargetAdorners.Insert;
+        }
+
+        void GongSolutions.Wpf.DragDrop.IDropTarget.Drop(GongSolutions.Wpf.DragDrop.IDropInfo dropInfo)
+        {
+            var target =
+                dropInfo.TargetItem is MpdFile
+                    ? dropInfo.TargetItem as MpdFile
+                    : dropInfo.TargetItem is IEnumerable<MpdFile>
+                        ? (dropInfo.TargetItem as IEnumerable<MpdFile>).FirstOrDefault()
+                        : null;
+            var items = dropInfo.DragInfo.SourceItems.OfType<MpdFile>().OrderBy(i => i.Pos).ToArray();
+            if (target != null && items.FirstOrDefault() != null && m_Mpc.Connected)
+            {
+                var x = target.Pos - ((dropInfo.InsertPosition & RelativeInsertPosition.AfterTargetItem) == 0 ? 1 : 0);
+                try
+                {
+                    foreach (var i in items)
+                    {
+                        var y = i.Pos;
+                        if (y > x)
+                            x++;
+                        m_Mpc.MoveId(i.Id, x);
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+        }
+
+        void GongSolutions.Wpf.DragDrop.IDragSource.Dropped(GongSolutions.Wpf.DragDrop.IDropInfo dropInfo)
+        {
+            
+        }
+
+        void GongSolutions.Wpf.DragDrop.IDragSource.StartDrag(GongSolutions.Wpf.DragDrop.IDragInfo dragInfo)
+        {
+            if (dragInfo.SourceItems.OfType<object>().Count() > 1)
+            {
+                dragInfo.Effects = DragDropEffects.Move;
+            }
+        }
+    }
+
+    protected readonly Context context;
 
     public MainWindow()
     {
@@ -171,6 +229,9 @@ namespace WpfMpdClient
       m_MpcIdle.OnConnected += MpcIdleConnected;
       m_MpcIdle.OnSubsystemsChanged += MpcIdleSubsystemsChanged;
 
+      DataContext = context = new Context(m_Mpc);
+      context.Playlist = new ObservableCollection<MpdFile>();
+
       cmbSearch.SelectedIndex = 0;
 
       tabFileSystem.Visibility = m_Settings.ShowFilesystemTab ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
@@ -206,11 +267,6 @@ namespace WpfMpdClient
 
       lstGenresAlbums.ItemsSource = m_GenresAlbumsSource;
       lstGenresAlbums.SearchProperty = t.GetProperty("Album");
-
-      lstPlaylist.ItemsSource = m_PlaylistTracks;
-      lstPlaylistStyled.ItemsSource = m_PlaylistTracks;
-      m_DragDropManager = new ListViewDragDropManager<MpdFile>(m_Settings.StyledPlaylist ? lstPlaylistStyled : lstPlaylist);
-      m_DragDropManager.ProcessDrop += dragMgr_ProcessDrop;
 
       lstChannels.ItemsSource = m_Channels;
       cmbChannnels.ItemsSource = m_Channels;
@@ -706,8 +762,6 @@ namespace WpfMpdClient
 
       lstPlaylist.Visibility = m_Settings.StyledPlaylist ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
       lstPlaylistStyled.Visibility = m_Settings.StyledPlaylist ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-      m_DragDropManager.Selector = m_Settings.StyledPlaylist ? lstPlaylistStyled : lstPlaylist;
-      m_DragDropManager.ProcessDrop += dragMgr_ProcessDrop;
 
       m_IgnoreDisconnect = true;
       if (m_Mpc.Connected)
@@ -752,9 +806,9 @@ namespace WpfMpdClient
         ShowException(ex);
         return;
       }
-      m_PlaylistTracks.Clear();
+      context.Playlist.Clear();
       foreach (MpdFile file in tracks)
-        m_PlaylistTracks.Add(file);
+          context.Playlist.Add(file);
     }
 
     private void ContextMenu_Click(object sender, RoutedEventArgs args)
@@ -897,8 +951,8 @@ namespace WpfMpdClient
     private void lstPlaylist_Selected(object sender, RoutedEventArgs e)
     {
       ListBoxItem item = sender as ListBoxItem;
-      if (item != null)
-        item.IsSelected = false;
+      //if (item != null)
+        //item.IsSelected = false;
     }
 
     private void lstPlaylist_MouseDoubleClick(object sender, MouseButtonEventArgs e)

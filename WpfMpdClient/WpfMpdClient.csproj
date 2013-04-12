@@ -73,6 +73,9 @@
     <Reference Include="CsUpdater">
       <HintPath>dlls\CsUpdater.dll</HintPath>
     </Reference>
+    <Reference Include="GongSolutions.Wpf.DragDrop">
+      <HintPath>..\packages\gong-wpf-dragdrop.0.1.3.6\lib\net40\GongSolutions.Wpf.DragDrop.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -105,7 +108,6 @@
     <Compile Include="DragAdorner.cs" />
     <Compile Include="GridViewColumnResize.cs" />
     <Compile Include="ImageLoader.cs" />
-    <Compile Include="ListViewDragDropManager.cs" />
     <Compile Include="MiniPlayerWindow.xaml.cs">
       <DependentUpon>MiniPlayerWindow.xaml</DependentUpon>
     </Compile>
@@ -189,6 +191,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

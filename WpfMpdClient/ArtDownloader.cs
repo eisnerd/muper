@@ -210,9 +210,9 @@ namespace WpfMpdClient
         entry.ImageUrl = uri;
         return uri != null || entry.Tracks == null;
       }
-      else if (entry.Type == ListboxEntry.EntryType.Artist && entry.Artist != null)
+      else
       {
-        var url = DiskImageCache.GetFromCache(new Uri(entry.Artist, UriKind.Relative), entry.Artist);
+        var url = DiskImageCache.GetFromCache(new Uri(entry.Key, UriKind.Relative), entry.Key);
         if (!string.IsNullOrEmpty(url))
         {
           m_Cache[entry.Key] = new Uri(url);

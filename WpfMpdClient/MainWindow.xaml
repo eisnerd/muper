@@ -122,7 +122,7 @@
                                                     <Border Width="48" Height="48" Margin="0 2 0 0">
                                                         <local:ImageLoader MaxWidth="48" MaxHeight="48" Margin="2"
                                                             ImageUri="{Binding Path=ImageUrl}"
-                                                            ImageKey="{Binding Path=Artist}"
+                                                            ImageKey="{Binding Path=Key}"
                                                             />
                                                     </Border>
                                                     <TextBlock VerticalAlignment="Center" Text="{Binding Path=Artist}" />
@@ -154,6 +154,7 @@
                                             <Border Width="60" Height="60" Margin="0 2 8 0">
                                                 <local:ImageLoader MaxWidth="60" MaxHeight="60" Margin="2"
                                                     ImageUri="{Binding Path=ImageUrl}"
+                                                    ImageKey="{Binding Path=Key}"
                                              />
                                             </Border>
                                             <TextBlock VerticalAlignment="Center" TextBlock.FontWeight="Bold" Text="{Binding Path=Artist}" />
@@ -168,6 +169,7 @@
                                                         <local:ImageLoader
                                                             MaxWidth="48" MaxHeight="48" Margin="2"
                                                             ImageUri="{Binding Path=ImageUrl}"
+                                                            ImageKey="{Binding Path=Key}"
                                                             />
                                                     </Border>
                                                     <TextBlock VerticalAlignment="Center" Text="{Binding Path=Display}" />
@@ -180,6 +182,7 @@
                                                         <local:ImageLoader
                                                             MaxWidth="48" MaxHeight="48" Margin="2"
                                                             ImageUri="{Binding Path=ImageUrl}"
+                                                            ImageKey="{Binding Path=Key}"
                                                             />
                                                     </Border>
                                                     <TextBlock VerticalAlignment="Center" Text="{Binding Path=Album}" />
@@ -286,8 +289,9 @@
                                                 <StackPanel Orientation="Horizontal" Loaded="LisboxItem_Loaded">
                                                     <Border Width="48" Height="48" Margin="0 2 0 0">
                                                         <local:ImageLoader MaxWidth="48" MaxHeight="48" Margin="2"
-                                             ImageUri="{Binding Path=ImageUrl}"
-                                             />
+                                                            ImageUri="{Binding Path=ImageUrl}"
+                                                            ImageKey="{Binding Path=Key}"
+                                                            />
                                                     </Border>
                                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                                         <TextBlock FontWeight="Bold" Text="{Binding Path=Album}" />
@@ -478,6 +482,7 @@
                                                                     Width="80" Height="80"
                                                                     Margin="4"
                                                                     ImageUri="{Binding Path=AlbumEntry.ImageUrl}"
+                                                                    ImageKey="{Binding Path=AlbumEntry.Key}"
                                                                     />
                                                                 <StackPanel Margin="4">
                                                                     <Label Content="{Binding Path=Album}" />

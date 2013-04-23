@@ -17,9 +17,11 @@
 //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.ComponentModel;
+using Libmpc;
 
 namespace WpfMpdClient
 {
@@ -67,6 +69,12 @@ namespace WpfMpdClient
       }
     }
 
+    public Func<IEnumerable<MpdFile>> Tracks { get; set; }
+
+    public static string ArtistKey(string Artist)
+    {
+      return string.Format("{0}_{1}_", EntryType.Artist.ToString(), Artist);
+    }
     public string Key
     {
       get
@@ -94,19 +102,40 @@ namespace WpfMpdClient
     }
   }
 
+  public static class ListboxUtils
+  {
+    public static ListboxEntry Selected(this System.Windows.Controls.ListBox listbox)
+    {
+      return listbox == null ? null : listbox.SelectedItem as ListboxEntry;
+    }
+
+    public static string Artist(this ListboxEntry entry)
+    {
+      return (entry == null || entry.Artist == Mpc.NoArtist ? null : entry.Artist) ?? "";
+    }
+
+    public static string Album(this ListboxEntry entry)
+    {
+      return (entry == null || entry.Artist == Mpc.NoAlbum || entry.Album == Mpc.NoAlbum ? null : entry.Album) ?? "";
+    }
+  }
+
   public class ArtDownloader
   {
     bool m_Working = false;
     int m_Downloaders = 0;
     int m_MaxDownloaders = 5;
-    List<ListboxEntry> m_Entries = new List<ListboxEntry>();
+    HashSet<ListboxEntry> m_Entries = new HashSet<ListboxEntry>();
     Mutex m_Mutex = new Mutex();
     Mutex m_IndexMutex = new Mutex();
 
-    Dictionary<string, Uri> m_Cache = new Dictionary<string, Uri>();
+    static readonly Dictionary<string, Uri> cache = new Dictionary<string, Uri>();
+    Dictionary<string, Uri> m_Cache = cache;
 
-    public ArtDownloader()
+    public ArtDownloader(Settings m_Settings, int m_MaxDownloaders = 10)
     {
+      this.m_Settings = m_Settings;
+      this.m_MaxDownloaders = m_MaxDownloaders;
     }
 
     public void Start()
@@ -125,29 +154,28 @@ namespace WpfMpdClient
       Uri uri = null;
       if (m_Cache.TryGetValue(entry.Key, out uri)) {
         entry.ImageUrl = uri;
-        return true;
+        return uri != null || entry.Tracks == null;
       }
       return false;
     }
 
-    public void Add(ListboxEntry entry)
+    public void Now(ListboxEntry entry)
+    {
+      Add(entry, 0);
+    }
+
+    public void Soon(ListboxEntry entry)
     {
       Add(entry, -1);
     }
 
-    public void Add(ListboxEntry entry, int index)
+    void Add(ListboxEntry entry, int index)
     {
       if (GetFromCache(entry))
         return;
 
       m_Mutex.WaitOne();
-      if (m_Entries.Contains(entry))
-        m_Entries.Remove(entry);
-
-      if (index < 0)
-        m_Entries.Add(entry);
-      else
-        m_Entries.Insert(index, entry);
+      m_Entries.Add(entry);
       m_Mutex.ReleaseMutex();
     }
 
@@ -158,15 +186,17 @@ namespace WpfMpdClient
         if (m_Entries.Count > 0) {
           while (m_Downloaders < m_MaxDownloaders && m_Entries.Count > 0) {
             m_Mutex.WaitOne();
-            ListboxEntry entry = m_Entries[0];
-            m_Entries.RemoveAt(0);
+            ListboxEntry entry = m_Entries.FirstOrDefault();
+            if (entry != null)
+              m_Entries.Remove(entry);
             m_Mutex.ReleaseMutex();
 
             m_IndexMutex.WaitOne();
             m_Downloaders++;
             m_IndexMutex.ReleaseMutex();
 
-            System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(Downloader), entry);
+            if (entry != null)
+              System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(Downloader), entry);
           }
           System.Threading.Thread.Sleep(50);
         } else
@@ -174,25 +204,100 @@ namespace WpfMpdClient
       }
     }
 
+    private Settings m_Settings;
+    static readonly string[] filenames = new string[] { "cover", "folder", "album" };
+    static readonly string[] exts = new string[] { "jpg", "png", "gif" };
+
+    public static bool TryGet(Uri uri)
+    {
+      try
+      {
+        var req = System.Net.WebRequest.Create(uri);
+        using (var resp = (System.Net.HttpWebResponse)req.GetResponse())
+          return resp.StatusCode == System.Net.HttpStatusCode.OK;
+      }
+      catch { return false; }
+    }
+
+    public static IEnumerable<Uri> ImageUris(IEnumerable<string> paths)
+    {
+      return
+        from path in paths
+        from file in filenames
+        from ext in exts
+        select new Uri(new Uri("http://" + Settings.Instance.ServerAddress), System.IO.Path.Combine(path, file + "." + ext));
+    }
+
+    static readonly System.Text.RegularExpressions.Regex dir = new System.Text.RegularExpressions.Regex(@"^(.*)/(?:\\/|[^/]*)$");
+    public static IEnumerable<Uri> ImageUris(IEnumerable<MpdFile> tracks)
+    {
+      return ImageUris((tracks ?? new MpdFile[0]).Select(t => dir.Replace(t.File, "$1")).Distinct());
+    }
+
+    public static Uri ImageUri(IEnumerable<MpdFile> tracks)
+    {
+      return ImageUris(tracks)
+        .Where(TryGet)
+        .FirstOrDefault();
+    }
+
+    public static Uri ImageUri(params string[] paths)
+    {
+      return ImageUris(paths)
+        .Where(TryGet)
+        .FirstOrDefault();
+    }
+
+    public static Uri ImageUri(params MpdFile[] tracks)
+    {
+      return ImageUri((IEnumerable<MpdFile>)tracks);
+    }
+
+    static readonly System.Text.RegularExpressions.Regex cid = new System.Text.RegularExpressions.Regex(@".*[(](?:[^)]*?\s)*([^)]+)[)]\s*$");
     private void Downloader(object state)
     {
       ListboxEntry entry = state as ListboxEntry;
-      try {
+      try
+      {
         Uri uri = null;
         if (m_Cache.TryGetValue(entry.Key, out uri))
+        {
           entry.ImageUrl = uri;
-        else {
-          string url = string.Empty;
+          if (uri != null || entry.Tracks == null)
+            return;
+        }
+        string url = null;
+        if (entry.Type == ListboxEntry.EntryType.Album)
+        {
+          var m = cid.Match(entry.Album());
+          if (m.Success)
+            uri = ImageUri(System.IO.Path.Combine("cid", m.Groups[1].Value));
+        }
+        if (uri == null && entry.Tracks != null)
+          uri = ImageUri(entry.Tracks());
+        if (uri == null)
+        {
           if (entry.Type == ListboxEntry.EntryType.Artist)
             url = LastfmScrobbler.GetArtistArt(entry.Artist, Scrobbler.ImageSize.medium);
           else
-            url = LastfmScrobbler.GetAlbumArt(entry.Artist, entry.Album, Scrobbler.ImageSize.medium);
-          if (!string.IsNullOrEmpty(url))
-            entry.ImageUrl = new Uri(url);
-          m_Cache[entry.Key] = entry.ImageUrl;
+              url = LastfmScrobbler.GetAlbumArt(entry.Artist, entry.Album, Scrobbler.ImageSize.medium);
         }
-      } catch (Exception){
-      }finally {
+        if (!string.IsNullOrEmpty(url))
+          uri = new Uri(url);
+        if (uri != null)
+        {
+          entry.ImageUrl = uri;
+          if (entry.Type != ListboxEntry.EntryType.Artist)
+          {
+            Uri a;
+            m_Cache.TryGetValue(ListboxEntry.ArtistKey(entry.Artist), out a);
+            if (a != null)
+              m_Cache[entry.Artist] = a;
+          }
+        }
+        m_Cache[entry.Key] = entry.ImageUrl;
+      } catch (Exception) {
+      } finally {
         m_IndexMutex.WaitOne();
         m_Downloaders--;
         m_IndexMutex.ReleaseMutex();

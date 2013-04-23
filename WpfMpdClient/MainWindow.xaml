@@ -381,7 +381,7 @@
                                             <Condition Binding="{Binding Path=Supplement}" Value="True"/>
                                             <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}" Value="True"/>
                                         </MultiDataTrigger.Conditions>
-                                        <Setter Property="Foreground" Value="WhiteSmoke"/>
+                                        <Setter Property="Foreground" Value="Gray"/><!--or WhiteSmoke against darker highlight colors-->
                                     </MultiDataTrigger>
                                 </Style.Triggers>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />

@@ -115,8 +115,10 @@ namespace WpfMpdClient
       }
     }
 
+    MpdFile currentSong;
     public void Update(MpdStatus status, MpdFile currentSong)
     {
+      this.currentSong = currentSong;
       if (status == null)
         return;
 
@@ -184,13 +186,16 @@ namespace WpfMpdClient
 
     private void GetAlbumArt(object state)
     {
-      string url = LastfmScrobbler.GetAlbumArt(m_Artist, m_Album);
+      var uri = ArtDownloader.ImageUri(currentSong);
+      if (uri == null)
+      {
+        string url = LastfmScrobbler.GetAlbumArt(m_Artist, m_Album);
+        if (!string.IsNullOrEmpty(url))
+          uri = new Uri(url);
+      }
       Dispatcher.BeginInvoke(new Action(() =>
       {
-        if (!string.IsNullOrEmpty(url))
-          imgArt.Source = new BitmapImage(new Uri(url));
-        else
-          imgArt.Source = null;
+        imgArt.Source = uri == null ? null : new BitmapImage(uri);
       }));
     }
 

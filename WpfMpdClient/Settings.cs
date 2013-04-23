@@ -196,6 +196,8 @@ namespace WpfMpdClient
       return string.Format("{0}\\wpfmpdclient\\settings.xml", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
     } // GetSettingsFileName
 
+    public static Settings Instance;
+
     public static Settings Deserialize(string fileName)
     {
       if (!File.Exists(fileName))

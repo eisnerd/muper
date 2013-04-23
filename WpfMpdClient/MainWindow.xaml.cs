@@ -101,7 +101,8 @@ namespace WpfMpdClient
     MiniPlayerWindow m_MiniPlayer = null;
     List<string> m_Languages = new List<string>() { string.Empty, "fr", "de", "it", "jp", "pl", "pt", "ru", "es", "sv", "tr" };
 
-    ArtDownloader m_ArtDownloader = new ArtDownloader();
+    ArtDownloader m_ArtDownloader;
+    ArtDownloader m_ArtistArtDownloader;
     ObservableCollection<ListboxEntry> m_ArtistsSource = new ObservableCollection<ListboxEntry>();
     ObservableCollection<ListboxEntry> m_AlbumsSource = new ObservableCollection<ListboxEntry>();
     ObservableCollection<ListboxEntry> m_GenresAlbumsSource = new ObservableCollection<ListboxEntry>();
@@ -183,7 +184,7 @@ namespace WpfMpdClient
         txtLicense.Text = "LICENSE not found!!!";
       }
 
-      m_Settings = Settings.Deserialize(Settings.GetSettingsFileName());
+      Settings.Instance = m_Settings = Settings.Deserialize(Settings.GetSettingsFileName());
       if (m_Settings != null) {
         txtServerAddress.Text = m_Settings.ServerAddress;
         txtServerPort.Text = m_Settings.ServerPort.ToString();
@@ -220,6 +221,9 @@ namespace WpfMpdClient
       if (m_Settings.WindowMaximized)
         WindowState = System.Windows.WindowState.Maximized;
 
+      m_ArtDownloader = new ArtDownloader(m_Settings);
+      m_ArtistArtDownloader = new ArtDownloader(m_Settings, 2);
+
       m_Mpc = new Mpc();
       m_Mpc.OnConnected += MpcConnected;
       m_Mpc.OnDisconnected += MpcDisconnected;
@@ -228,10 +232,10 @@ namespace WpfMpdClient
       m_MpcIdle.OnConnected += MpcIdleConnected;
       m_MpcIdle.OnSubsystemsChanged += MpcIdleSubsystemsChanged;
 
-      Connect();
-
       DataContext = context = new Context(m_Mpc);
       context.Playlist = new ObservableCollection<MpdFile>();
+
+      Connect();
 
       cmbSearch.SelectedIndex = 0;
 
@@ -592,26 +596,30 @@ namespace WpfMpdClient
       }
 
       m_AlbumsSource.Clear();
-      string artist = SelectedArtist();
-      List<string> albums = null;
-      try{
-        albums = m_Mpc.List(ScopeSpecifier.Album, ScopeSpecifier.Artist, artist);
-      }catch (Exception ex){
-        ShowException(ex);
-        return;
-      }
-      albums.Sort();
-      for (int i = 0; i < albums.Count; i++) {
-        if (string.IsNullOrEmpty(albums[i]))
-          albums[i] = Mpc.NoAlbum;
-        ListboxEntry entry = new ListboxEntry() { Type = ListboxEntry.EntryType.Album, 
-                                                  Artist = artist,
-                                                  Album = albums[i] };
-        m_AlbumsSource.Add(entry);
-      }
-      if (albums.Count > 0){
-        lstAlbums.SelectedIndex = 0;
-        lstAlbums.ScrollIntoView(m_AlbumsSource[0]);
+      var a = lstArtist.Selected();
+      if (a != null) {
+        string artist = a.Artist();
+        List<string> albums = null;
+        try{
+          albums = m_Mpc.List(ScopeSpecifier.Album, ScopeSpecifier.Artist, artist);
+        }catch (Exception ex){
+          ShowException(ex);
+          return;
+        }
+        albums.Sort();
+        for (int i = 0; i < albums.Count; i++) {
+          if (string.IsNullOrEmpty(albums[i]))
+            albums[i] = Mpc.NoAlbum;
+          ListboxEntry entry = new ListboxEntry() { Type = ListboxEntry.EntryType.Album, 
+                                                    Artist = artist,
+                                                    Album = albums[i] };
+          m_AlbumsSource.Add(entry);
+        }
+        if (albums.Count > 0){
+          lstAlbums.SelectedIndex = 0;
+          lstAlbums.ScrollIntoView(m_AlbumsSource[0]);
+        }
+        m_ArtistArtDownloader.Soon(a);
       }
     }
 
@@ -693,6 +701,7 @@ namespace WpfMpdClient
 
     }
 
+    static readonly System.Text.RegularExpressions.Regex dir = new System.Text.RegularExpressions.Regex(@"^(.*)/(?:\\/|[^/]*)$");
     private void lstAlbums_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       if (m_Mpc == null || !m_Mpc.Connected)
@@ -704,9 +713,7 @@ namespace WpfMpdClient
 
         ListBox listBox = null;
         if (tabBrowse.SelectedIndex == 0 && lstArtist.SelectedItem != null) {
-          string artist = SelectedArtist();
-          if (artist == Mpc.NoArtist)
-            artist = string.Empty;
+          string artist = lstArtist.Selected().Artist();
           search[ScopeSpecifier.Artist] = artist;
           listBox = lstAlbums;
         } else if (tabBrowse.SelectedIndex == 1 && lstGenres.SelectedItem != null) {
@@ -717,18 +724,45 @@ namespace WpfMpdClient
           listBox = lstGenresAlbums;
         }
 
-        string album = SelectedAlbum(listBox);
-        if (album == Mpc.NoAlbum)
-          album = string.Empty;
-        search[ScopeSpecifier.Album] = album;
+        var album = listBox.Selected();
+        search[ScopeSpecifier.Album] = album.Album();
 
         try{
           m_Tracks = m_Mpc.Find(search);
-        }catch (Exception ex){
+          if (album != null) {
+            album.Tracks = () => m_Tracks;
+            m_ArtDownloader.Now(album);
+          }
+        }
+        catch (Exception ex)
+        {
           ShowException(ex);
           return;
         }
-        lstTracks.ItemsSource = m_Tracks;
+        m_Tracks.Do(m => m.AlbumEntry = album);
+        var selection = m_Tracks.ToDictionary(m => m.File);
+        var all = m_Tracks
+          .OrderBy(m => m.Disc * 1000 + m.TrackNo)
+          .GroupBy(m => dir.Replace(m.File, "$1"))
+          .SelectMany(Utilities.Try<IGrouping<string, MpdFile>, IEnumerable<MpdFile>>(g =>
+            m_Mpc.ListAllInfo(g.Key)
+              .OrderBy(m => m.Disc * 1000 + m.TrackNo)
+              .Where(m => (m.Supplement = !selection.Remove(m.File)) || true)
+          ))
+          .ToList();
+        all.GroupBy(m => m.Artist).Do(a =>
+          a.GroupBy(m => m.Album).Do(b => {
+          var i = new ListboxEntry() {
+            Type = ListboxEntry.EntryType.Album,
+            Artist = a.Key,
+            Album = b.Key,
+            Tracks = () => b,
+          };
+          b.Do(m => m.AlbumEntry = i);
+          m_ArtDownloader.Soon(i);
+        }));
+        all.AddRange(selection.Values);
+        lstTracks.ItemsSource = all;
         ScrollTracksToLeft();
       } else {
         m_Tracks = null;
@@ -1002,6 +1036,53 @@ namespace WpfMpdClient
           try{
             m_Mpc.Play(file.Pos);
           }catch (Exception ex){
+            ShowException(ex);
+            return;
+          }
+        }
+      }
+    }
+
+    private void lstTracks_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      if (m_Mpc == null || !m_Mpc.Connected)
+        return;
+
+      var view = sender as ListView;
+      if (view != null)
+      {
+        MpdFile file = view.SelectedItems.OfType<MpdFile>().FirstOrDefault();
+        if (file != null)
+        {
+          try
+          {
+            if (file.Supplement)
+            {
+              tabBrowse.SelectedIndex = 0;
+              object item;
+
+              if (!lstArtist.SelectedItems.OfType<ListboxEntry>().Any(m => m.Artist == file.Artist)
+                && (item = lstArtist.Items.OfType<ListboxEntry>().First(m => m.Artist == file.Artist)) != null)
+              {
+                lstArtist.SelectedItem = item;
+                lstArtist.ScrollIntoView(item);
+              }
+              if ((item = lstAlbums.Items.OfType<ListboxEntry>().First(m => m.Album == file.Album)) != null)
+              {
+                lstAlbums.SelectedItem = item;
+                lstAlbums.ScrollIntoView(item);
+              }
+              if ((item = lstTracks.Items.OfType<MpdFile>().First(m => m.File == file.File)) != null)
+              {
+                lstTracks.SelectedItem = item;
+                lstTracks.ScrollIntoView(item);
+              }
+            }
+            else
+              m_Mpc.Add(file.File);
+          }
+          catch (Exception ex)
+          {
             ShowException(ex);
             return;
           }
@@ -1423,38 +1504,15 @@ namespace WpfMpdClient
         e.Handled = true;
     }
 
-    private string SelectedArtist()
-    {
-      ListboxEntry entry = lstArtist.SelectedItem as ListboxEntry;
-      if (entry != null) {
-        if (entry.Artist == Mpc.NoArtist)
-          return string.Empty;
-        return entry.Artist;
-      }
-      return string.Empty;
-    } // SelectedArtist
-
-    private string SelectedAlbum(ListBox listbox)
-    {
-      if (listbox == null)
-        return string.Empty;
-
-      ListboxEntry entry = listbox.SelectedItem as ListboxEntry;
-      if (entry != null) {
-        if (entry.Artist == Mpc.NoAlbum)
-          return string.Empty;
-        return entry.Album;
-      }
-      return string.Empty;
-    } // SelectedAlbum
-
     private void LisboxItem_Loaded(object sender, RoutedEventArgs e)
     {
       StackPanel stackPanel = sender as StackPanel;
       if (stackPanel != null){
         ListboxEntry entry = stackPanel.DataContext as ListboxEntry;
         if (entry != null) {
-          m_ArtDownloader.Add(entry, 0);
+          if (entry.Type == ListboxEntry.EntryType.Artist)
+            entry.Tracks = () => m_Mpc.List(ScopeSpecifier.Filename, ScopeSpecifier.Artist, entry.Artist).Select(f => new MpdFile(f));
+          m_ArtDownloader.Soon(entry);
         }
       }
     }
@@ -1466,11 +1524,11 @@ namespace WpfMpdClient
         listViewScrollViewer.ScrollToLeftEnd();
     }
 
-		private void dragMgr_ProcessDrop( object sender, ProcessDropEventArgs<MpdFile> e )
+		private void dragMgr_ProcessDrop( object sender )
 		{
       if (m_Mpc.Connected){
         try{
-          m_Mpc.Move(e.OldIndex, e.NewIndex);
+          //m_Mpc.Move(e.OldIndex, e.NewIndex);
         }catch (Exception ex){
           ShowException(ex);
           return;

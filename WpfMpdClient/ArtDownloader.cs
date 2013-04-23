@@ -31,6 +31,10 @@ namespace WpfMpdClient
     EntryType m_Type;
     string m_Artist;
     string m_Album;
+    bool m_Head = true;
+    bool m_Selected;
+    string m_Display;
+    System.Collections.ObjectModel.ObservableCollection<ListboxEntry> m_Related = new System.Collections.ObjectModel.ObservableCollection<ListboxEntry>();
     Uri m_ImageUrl = null;
 
     public enum EntryType
@@ -66,6 +70,56 @@ namespace WpfMpdClient
       {
         m_Album = value;
         OnPropertyChanged("Album");
+      }
+    }
+
+    public bool Head
+    {
+      get { return m_Head; }
+      set
+      {
+        m_Head = value;
+        OnPropertyChanged("Visible");
+      }
+    }
+
+    public bool Selected
+    {
+      get { return m_Selected; }
+      set
+      {
+        m_Selected = value;
+        OnPropertyChanged("Selected");
+        OnPropertyChanged("Visible");
+      }
+    }
+
+    public bool Visible
+    {
+      get { return m_Selected || m_Head; }
+      set
+      {
+        Head = value;
+      }
+    }
+
+    public string Display
+    {
+      get { return m_Display; }
+      set
+      {
+        m_Display = value;
+        OnPropertyChanged("Display");
+      }
+    }
+
+    public System.Collections.ObjectModel.ObservableCollection<ListboxEntry> Related
+    {
+      get { return m_Related; }
+      set
+      {
+        m_Related = value;
+        OnPropertyChanged("Related");
       }
     }
 

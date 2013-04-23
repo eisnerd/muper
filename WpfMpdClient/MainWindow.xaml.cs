@@ -585,6 +585,7 @@ namespace WpfMpdClient
       }
     }
 
+    static readonly System.Text.RegularExpressions.Regex recording = new System.Text.RegularExpressions.Regex(@"^(.*?)(,? +[Vv]ol.? +\d+,?)?(?: +[(]([^()]+)[)])*$", System.Text.RegularExpressions.RegexOptions.Compiled);
     private void lstArtist_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       if (m_Mpc == null || !m_Mpc.Connected)
@@ -607,13 +608,33 @@ namespace WpfMpdClient
           return;
         }
         albums.Sort();
-        for (int i = 0; i < albums.Count; i++) {
-          if (string.IsNullOrEmpty(albums[i]))
-            albums[i] = Mpc.NoAlbum;
-          ListboxEntry entry = new ListboxEntry() { Type = ListboxEntry.EntryType.Album, 
-                                                    Artist = artist,
-                                                    Album = albums[i] };
-          m_AlbumsSource.Add(entry);
+        ListboxEntry last = null;
+        foreach (var _album in albums) {
+          var album = string.IsNullOrEmpty(_album) ? Mpc.NoAlbum : _album;
+          var m = recording.Match(album);
+          var display = m.Success ? m.Groups[1].Value : album;
+          ListboxEntry entry = new ListboxEntry()
+          {
+            Type = ListboxEntry.EntryType.Album,
+            Artist = artist,
+            Album = album,
+            Display = display,
+          };
+          if (last != null && display.Equals(last.Display, StringComparison.CurrentCultureIgnoreCase))
+          {
+            if (last.Related.Count == 0)
+              last.Related.Add(last);
+            last.Related.Add(entry);
+            entry.Related = last.Related;
+            entry.Head = false;
+          }
+          //else
+          {
+            m_AlbumsSource.Add(entry);
+            if (last != null && last.Related.Count == 0)
+              last.Display = last.Album;
+          }
+          last = entry;
         }
         if (albums.Count > 0){
           lstAlbums.SelectedIndex = 0;
@@ -726,6 +747,18 @@ namespace WpfMpdClient
 
         var album = listBox.Selected();
         search[ScopeSpecifier.Album] = album.Album();
+
+        if (album != null) {
+          album.Related.Do(r => r.Selected = true);
+          
+          if (e != null) {
+            var old = e.RemovedItems.OfType<ListboxEntry>().FirstOrDefault();
+            if (old != null && !album.Related.Contains(old))
+              old.Related.Do(r => r.Selected = false);
+          }
+
+          listBox.ScrollIntoView(album);
+        }
 
         try{
           m_Tracks = m_Mpc.Find(search);

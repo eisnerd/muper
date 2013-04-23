@@ -206,6 +206,8 @@ namespace WpfMpdClient
       loadedImage.DecodeFailed += OnDecodeFailed;
       loadedImage.UriSource = !string.IsNullOrEmpty(fromCache) ? new Uri(fromCache) : ImageUri;
       loadedImage.EndInit();
+      if (!string.IsNullOrEmpty(fromCache))
+        Source = loadedImage;
     }
 
     /// <summary>

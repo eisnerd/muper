@@ -36,6 +36,7 @@ using System.ComponentModel;
 using CsUpdater;
 using System.Reflection;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace WpfMpdClient
 {
@@ -116,7 +117,11 @@ namespace WpfMpdClient
 
         readonly Mpc m_Mpc = null;
         public Context(Mpc m_Mpc)
-        { this.m_Mpc = m_Mpc; }
+        {
+            this.m_Mpc = m_Mpc;
+            Primary = new Vis();
+            Tracks = new Vis() { Empty = GridLength.Auto };
+        }
 
         void GongSolutions.Wpf.DragDrop.IDropTarget.DragOver(GongSolutions.Wpf.DragDrop.IDropInfo dropInfo)
         {
@@ -164,6 +169,38 @@ namespace WpfMpdClient
             if (dragInfo.SourceItems.OfType<object>().Count() > 1)
             {
                 dragInfo.Effects = DragDropEffects.Move;
+            }
+        }
+
+        public class Vis : INotifyPropertyChanged
+        {
+          public event PropertyChangedEventHandler PropertyChanged;
+          private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+          {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+          }
+          
+          bool vis;
+          public bool Visible { set { vis = value; NotifyPropertyChanged("Show"); NotifyPropertyChanged("Hide"); NotifyPropertyChanged("Size"); } }
+          public Visibility Show { get { return vis ? Visibility.Visible : Visibility.Collapsed; } }
+          public Visibility Hide { get { return !vis ? Visibility.Visible : Visibility.Collapsed; } }
+
+          GridLength size = new GridLength(1, GridUnitType.Star);//GridLength.Auto;
+          public GridLength Empty = new GridLength(0);
+          public GridLength Size { get { return vis ? size : Empty; } set { size = value; } }
+        }
+
+        public Vis Tracks { get; set; }
+        public Vis Primary { get; set; }
+        public bool View
+        {
+            set
+            {
+                Tracks.Visible = value;
+                Primary.Visible = !value;
             }
         }
     }
@@ -281,6 +318,7 @@ namespace WpfMpdClient
 
       m_ArtDownloader.Start();      
       txtStatus.Text = "Not connected";
+      context.View = false;
     }
 
     public int CurrentTrackId
@@ -597,6 +635,7 @@ namespace WpfMpdClient
 
       var a = lstArtist.Selected();
       if (a != null) {
+        ArtistLabel.DataContext = a;
         string artist = a.Artist();
        System.Threading.ThreadPool.QueueUserWorkItem(o => {
         List<string> albums = null;
@@ -1715,5 +1754,22 @@ namespace WpfMpdClient
       }
     }    
     #endregion
+
+    private void Label_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      context.View = false;
+    }
+
+    private void Label_PreviewMouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
+    {
+      context.View = true;
+    }
+
+    private void lstAlbums_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      var i = lstAlbums.InputHitTest(e.GetPosition(lstAlbums)) as FrameworkElement;
+      if (i != null && i.DataContext != null && i.DataContext == lstAlbums.SelectedItem)
+        context.View = true;
+    }
   }
 }

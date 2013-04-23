@@ -91,9 +91,9 @@
                     </Grid.Resources>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MinWidth="100" Width="*" />
-                        <ColumnDefinition MinWidth="100" Width="*" />
+                        <ColumnDefinition MinWidth="0" Width="{Binding Tracks.Size, Mode=TwoWay}" />
                     </Grid.ColumnDefinitions>
-                    <TabControl Margin="2,2,5,2" Name="tabBrowse" SelectionChanged="tabBrowse_SelectionChanged" TabStripPlacement="Left">
+                    <TabControl Margin="0,0,5,0" Name="tabBrowse" SelectionChanged="tabBrowse_SelectionChanged" TabStripPlacement="Left">
                         <TabControl.Resources>
                             <Style TargetType="TabPanel">
                                 <Setter Property="VerticalAlignment" Value="Bottom"/>
@@ -101,12 +101,12 @@
                         </TabControl.Resources>
                         <TabItem Header="Artists" Height="90">
                             <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition MinHeight="100" Height="*" />
-                                    <RowDefinition MinHeight="100" Height="*" />
-                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="0" Width="{Binding Primary.Size, Mode=TwoWay}" />
+                                    <ColumnDefinition MinWidth="100" Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                                <DockPanel Grid.Row="0">
+                                <DockPanel Grid.Column="0" Visibility="{Binding Primary.Show}">
                                     <local:SearchableListBox Margin="2,2,2,5" x:Name="lstArtist" SelectionMode="Single" SelectionChanged="lstArtist_SelectionChanged">
                                         <local:SearchableListBox.ItemContainerStyle>
                                             <Style TargetType="ListBoxItem">
@@ -131,12 +131,34 @@
                                     </local:SearchableListBox>
                                 </DockPanel>
 
-                                <GridSplitter ResizeDirection="Rows" VerticalAlignment="Bottom"
-                      Grid.Row="0"
-                      HorizontalAlignment="Stretch" Height="2"/>
+                                <GridSplitter
+                                    Margin="0"
+                                    Grid.Column="0" ResizeDirection="Columns"
+                                    HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="2"
+                                    Visibility="{Binding Primary.Show}"
+                                    />
 
-                                <DockPanel Grid.Row="1">
-                                    <local:SearchableListBox Margin="2" Grid.Row="3" SelectionMode="Single" x:Name="lstAlbums" SelectionChanged="lstAlbums_SelectionChanged">
+                                <DockPanel Grid.Column="1" LastChildFill="True">
+                                    <Border
+                                        DockPanel.Dock="Top"
+                                        Padding="0,5,0,5" Margin="2,0,0,0"
+                                        BorderBrush="LightGray" BorderThickness="0,0,0,2"
+                                        Visibility="{Binding Primary.Hide}"
+                                        PreviewMouseLeftButtonDown="Label_PreviewMouseLeftButtonDown" Background="Transparent"
+                                        >
+                                        <StackPanel
+                                            Orientation="Horizontal"
+                                            Name="ArtistLabel"
+                                            >
+                                            <Border Width="60" Height="60" Margin="0 2 8 0">
+                                                <local:ImageLoader MaxWidth="60" MaxHeight="60" Margin="2"
+                                                    ImageUri="{Binding Path=ImageUrl}"
+                                             />
+                                            </Border>
+                                            <TextBlock VerticalAlignment="Center" TextBlock.FontWeight="Bold" Text="{Binding Path=Artist}" />
+                                        </StackPanel>
+                                    </Border>
+                                    <local:SearchableListBox Margin="2" Grid.Row="3" SelectionMode="Single" x:Name="lstAlbums" SelectionChanged="lstAlbums_SelectionChanged" PreviewMouseLeftButtonDown="lstAlbums_PreviewMouseLeftButtonDown">
                                         <local:SearchableListBox.Resources>
                                             <DataTemplate x:Key="DefaultItemTemplate">
                                                 <StackPanel Orientation="Horizontal" Loaded="LisboxItem_Loaded">
@@ -391,7 +413,12 @@
                     <GridSplitter ResizeDirection="Columns" HorizontalAlignment="Right" 
                       VerticalAlignment="Stretch" Width="2" Grid.RowSpan="2" />
 
-                    <ListView Margin="2" Grid.Column="1" x:Name="lstTracks" SelectionMode="Extended" SelectionChanged="lstTracks_SelectionChanged" MouseDoubleClick="lstTracks_MouseDoubleClick">
+                    <Label Grid.Column="1"
+                           VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                           PreviewMouseLeftButtonDown="Label_PreviewMouseLeftButtonDown_1"
+                           Foreground="LightGray"
+                           Visibility="{Binding Tracks.Hide}"><![CDATA[<]]></Label>
+                    <ListView Margin="2" Grid.Column="1" x:Name="lstTracks" SelectionMode="Extended" SelectionChanged="lstTracks_SelectionChanged" MouseDoubleClick="lstTracks_MouseDoubleClick" Visibility="{Binding Tracks.Show}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Style.Triggers>

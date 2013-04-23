@@ -27,7 +27,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using GongSolutions.Wpf.DragDrop;
 using Libmpc;
 using System.Net;
@@ -40,7 +39,7 @@ using System.Collections.ObjectModel;
 
 namespace WpfMpdClient
 {
-  public partial class MainWindow : Window
+  public partial class MainWindow
   {
     public class MpdChannel : INotifyPropertyChanged
     {
@@ -203,7 +202,7 @@ namespace WpfMpdClient
 
         chkTray_Changed(null, null);
 
-        lstTracks.SetColumnsInfo(m_Settings.TracksListView);
+        //lstTracks.SetColumnsInfo(m_Settings.TracksListView);
         lstPlaylist.SetColumnsInfo(m_Settings.PlayListView);
       } else
         m_Settings = new Settings();
@@ -228,6 +227,8 @@ namespace WpfMpdClient
       m_MpcIdle = new Mpc();
       m_MpcIdle.OnConnected += MpcIdleConnected;
       m_MpcIdle.OnSubsystemsChanged += MpcIdleSubsystemsChanged;
+
+      Connect();
 
       DataContext = context = new Context(m_Mpc);
       context.Playlist = new ObservableCollection<MpdFile>();
@@ -816,6 +817,12 @@ namespace WpfMpdClient
       if (m_Mpc == null || !m_Mpc.Connected)
         return;
 
+      int last = -1;
+      try {
+        last = m_Mpc.PlaylistInfo().Last().Pos;
+      } catch {
+      }
+
       MenuItem item = sender as MenuItem;
       if (item.Name == "mnuDeletePlaylist") {
         string playlist = lstPlaylists.SelectedItem.ToString();
@@ -857,12 +864,29 @@ namespace WpfMpdClient
           return;
         }
       }        
-    }
+      if (item.Name == "mnuAddPlay"){
+        try{
+          if (last < 0)
+            m_Mpc.Play();
+          else
+            m_Mpc.Play(last + 1);
+        }catch (Exception ex){
+          ShowException(ex);
+          return;
+        }
+      }        
+}
 
     private void TracksContextMenu_Click(object sender, RoutedEventArgs args)
     {
       if (m_Mpc == null || !m_Mpc.Connected)
         return;
+
+      int last = -1;
+      try {
+        last = m_Mpc.PlaylistInfo().Last().Pos;
+      } catch {
+      }
 
       MenuItem mnuItem = sender as MenuItem;
       if (mnuItem.Name == "mnuAddReplace" || mnuItem.Name == "mnuAddReplacePlay"){
@@ -881,6 +905,17 @@ namespace WpfMpdClient
 
       if (mnuItem.Name == "mnuAddReplacePlay")
         m_Mpc.Play();
+      if (mnuItem.Name == "mnuAddPlay"){
+        try{
+          if (last < 0)
+            m_Mpc.Play();
+          else
+            m_Mpc.Play(last + 1);
+        }catch (Exception ex){
+          ShowException(ex);
+          return;
+        }
+      }
     }
 
 
@@ -1095,7 +1130,7 @@ namespace WpfMpdClient
         m_Settings.WindowTop = Top;
         m_Settings.WindowWidth = ActualWidth;
         m_Settings.WindowHeight = ActualHeight;
-        m_Settings.TracksListView = lstTracks.GetColumnsInfo();
+        //m_Settings.TracksListView = lstTracks.GetColumnsInfo();
         m_Settings.PlayListView = lstPlaylist.GetColumnsInfo();
 
         m_Settings.Serialize(Settings.GetSettingsFileName());
@@ -1149,6 +1184,8 @@ namespace WpfMpdClient
 
     private void TrackChanged(MpdFile track)
     {
+      if (track != null)
+        Title = track.Title + ", " + track.Album + ", " + track.Artist;
       if (m_Settings.Scrobbler){
         if (m_CurrentTrack != null && m_CurrentTrack.Time >= 30){
           double played = (DateTime.Now - m_CurrentTrackStart).TotalSeconds;
@@ -1448,7 +1485,7 @@ namespace WpfMpdClient
 
     private void ShowException(Exception ex)
     {
-      MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+      //MessageBox.Show(ex.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     #region Client to client Messages

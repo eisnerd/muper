@@ -48,7 +48,7 @@
       </DockPanel>        
     </Grid>
 
-    <Grid Name="gridTimeSlider" Grid.Row="1">
+    <Grid Name="gridTimeSlider" Margin="0 0 6 0" Grid.Row="1">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>

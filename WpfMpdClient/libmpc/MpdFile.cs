@@ -27,6 +27,9 @@ namespace Libmpc
   /// </summary>
   public class MpdFile
   {
+    public bool Supplement { get; set; }
+    public WpfMpdClient.ListboxEntry AlbumEntry { get; set; }
+
     private const string TAG_FILE = "file";
     private const string TAG_TIME = "Time";
     private const string TAG_ARTIST = "Artist";
@@ -97,6 +100,7 @@ namespace Libmpc
     /// The value of the track property of the file.
     /// </summary>
     public string Track { get { return this.track; } }
+    public int TrackNo { get { int i; return int.TryParse(Track, out i) ? i : 0; } }
     /// <summary>
     /// The name of the song.
     /// </summary>
@@ -207,6 +211,8 @@ namespace Libmpc
     /// <param name="disc">The number of the disc on a multidisc album.</param>
     /// <param name="pos">The index of the file in a playlist.</param>
     /// <param name="id">The id of the file in a playlist.</param>
+    public MpdFile(string file)
+    { this.file = file; }
     public MpdFile(string file,
         int time,
         string album,
@@ -499,7 +505,7 @@ namespace Libmpc
               name = line.Value;
               break;
             case TAG_GENRE:
-              genre = line.Value;
+              genre = genre == NO_GENRE ? line.Value : genre + "\n" + line.Value;
               break;
             case TAG_DATE:
               date = line.Value;

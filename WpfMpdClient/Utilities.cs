@@ -38,8 +38,92 @@ using System.Windows.Navigation;
 
 namespace WpfMpdClient
 {
-  public class Utilities
+  public static class Utilities
   {
+    public static IEnumerable<T> Do<T>(this IEnumerable<T> ts, Action<T> a)
+    {
+      foreach (var t in ts)
+        a(t);
+      return ts;
+    }
+
+    public static IEnumerable<T> Try<T>(this IEnumerable<T> ts, Action<T> a)
+    {
+      return ts.Do(Try(a));
+    }
+
+    public static Action<T> Try<T>(this Action<T> a)
+    {
+      return t =>
+      {
+        try
+        {
+          a(t);
+        }
+        catch { }
+      };
+    }
+
+    public static Func<T> Try<T>(this Func<T> f, T @default = default(T))
+    {
+      return () =>
+      {
+        try
+        {
+          return f();
+        }
+        catch
+        {
+          return @default;
+        }
+      };
+    }
+
+    public static Func<T> Try<T>(this Func<T> f, Func<T> fallback = null)
+    {
+      return () =>
+      {
+        try
+        {
+          return f();
+        }
+        catch
+        {
+          return fallback == null ? default(T) : fallback();
+        }
+      };
+    }
+
+    public static Func<T, T> Try<T>(this Func<T, T> f, Func<T, T> fallback = null)
+    {
+      return t =>
+      {
+        try
+        {
+          return f(t);
+        }
+        catch
+        {
+          return fallback == null ? t : fallback(t);
+        }
+      };
+    }
+
+    public static Func<T, U> Try<T, U>(this Func<T, U> f, Func<T, U> fallback = null) where T : U
+    {
+      return t =>
+      {
+        try
+        {
+          return f(t);
+        }
+        catch
+        {
+          return fallback == null ? t : fallback(t);
+        }
+      };
+    }
+
     public static void RenderHtml(TextBlock textBlock, string text, RequestNavigateEventHandler handler)
     {
       textBlock.Text = text;

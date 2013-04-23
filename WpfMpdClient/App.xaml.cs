@@ -42,7 +42,7 @@ namespace WpfMpdClient
       KListener.KeyDown += new RawKeyEventHandler(KListener_KeyDown);
     }
 
-    static void ExceptionHandler(object sender, UnhandledExceptionEventArgs args)
+    void ExceptionHandler(object sender, UnhandledExceptionEventArgs args)
     {
       Exception e = (Exception)args.ExceptionObject;
       StringBuilder sb = new StringBuilder();
@@ -71,7 +71,7 @@ namespace WpfMpdClient
                               dlg.Email, sb.ToString());
       }
 
-      throw e;
+      this.Shutdown();
     }
 
     void KListener_KeyDown(object sender, RawKeyEventArgs args)

@@ -62,10 +62,10 @@ namespace WpfMpdClient
 
     protected override void OnInitialized(EventArgs e)
     {
-      SetListViewContextMenu();
+      /*SetListViewContextMenu();
       GridView view = GetView();
       if (view != null)
-        view.Columns.CollectionChanged += ColumnsChangedHandler;
+        view.Columns.CollectionChanged += ColumnsChangedHandler;*/
       base.OnInitialized(e);
       m_Initialized = true;
     }

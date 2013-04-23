@@ -121,8 +121,9 @@
                                                 <StackPanel Orientation="Horizontal" Loaded="LisboxItem_Loaded" >
                                                     <Border Width="48" Height="48" Margin="0 2 0 0">
                                                         <local:ImageLoader MaxWidth="48" MaxHeight="48" Margin="2"
-                                             ImageUri="{Binding Path=ImageUrl}"
-                                             />
+                                                            ImageUri="{Binding Path=ImageUrl}"
+                                                            ImageKey="{Binding Path=Artist}"
+                                                            />
                                                     </Border>
                                                     <TextBlock VerticalAlignment="Center" Text="{Binding Path=Artist}" />
                                                 </StackPanel>

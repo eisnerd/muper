@@ -57,27 +57,58 @@ namespace WpfMpdClient
   using System.Collections.Generic;
   using System.Threading;
   using System.IO;
+  using System.Linq;
+  using System.Collections.Concurrent;
 
   public class DiskImageCache
   {
-    static string m_TempPath = System.IO.Path.GetTempPath();
-    static Dictionary<Uri, string> m_Cache = new Dictionary<Uri,string>();
-    static Mutex m_Mutex = new Mutex();
+    static string m_TempPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.ToString(), "Art");
+    static ConcurrentDictionary<Uri, string> m_Cache = new ConcurrentDictionary<Uri, string>();
+    static DiskImageCache()
+    {
+      Directory.CreateDirectory(m_TempPath);
+    }
 
-    public static string GetFromCache(Uri uri)
+    [ThreadStatic]
+    static System.Security.Cryptography.MD5 hash;
+
+    static string Hash(string data)
+    {
+      var s = new System.Text.StringBuilder();
+      if (hash == null)
+        hash = System.Security.Cryptography.MD5.Create();
+      foreach (var b in hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(data)))
+        s.AppendFormat("{0:x2}", b);
+      return s.ToString();
+    }
+
+    static string TempPath(object o)
+    {
+      return Path.Combine(m_TempPath, Hash((o ?? Guid.NewGuid()).ToString()) + ".jpg");
+    }
+
+    public static string Lookup(params object[] keys)
+    {
+      return keys.Select(TempPath).FirstOrDefault(File.Exists);
+    }
+
+    public static string GetFromCache(Uri uri, string key)
     {
       string result = string.Empty;
-      m_Cache.TryGetValue(uri, out result);
+      if (!m_Cache.TryGetValue(uri, out result))
+      {
+        result = Lookup(uri, key);
+        if (result != null)
+          m_Cache[uri] = result;
+      }
       return result;
     }
 
-    public static void AddToCache(BitmapImage image)
+    public static void AddToCache(BitmapImage image, string key = null)
     {
-      m_Mutex.WaitOne();
       try {
         JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-        Guid imageId = System.Guid.NewGuid();
-        string path = string.Format("{0}\\{1}", m_TempPath, imageId.ToString() + ".jpg");
+        string path = TempPath(key ?? (object)image.UriSource);
         encoder.Frames.Add(BitmapFrame.Create(image));
         using (var filestream = new FileStream(path, FileMode.Create))
           encoder.Save(filestream);
@@ -85,17 +116,12 @@ namespace WpfMpdClient
         m_Cache[image.UriSource] = path;
       } catch (Exception) { 
       }
-      m_Mutex.ReleaseMutex();
     }
 
     public static void DeleteCacheFiles()
     {
-      foreach (string path in m_Cache.Values){
-        try {
-          File.Delete(path);
-        } catch (Exception) {
-        }
-      }
+      hash.Dispose();
+      // TODO: Delete old cache files
     }
   }
 
@@ -109,6 +135,9 @@ namespace WpfMpdClient
     /// </summary>
     public static readonly DependencyProperty ImageUriProperty = DependencyProperty.Register(
         "ImageUri", typeof(Uri), typeof(ImageLoader), new PropertyMetadata(null, OnImageUriChanged));
+
+    public static readonly DependencyProperty ImageKeyProperty = DependencyProperty.Register(
+        "ImageKey", typeof(string), typeof(ImageLoader));
 
     private static void OnImageUriChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -159,6 +188,22 @@ namespace WpfMpdClient
     }
 
     /// <summary>
+    /// Gets or sets the ImageKey property.
+    /// </summary>
+    public string ImageKey
+    {
+      get
+      {
+        return GetValue(ImageKeyProperty) as string;
+      }
+
+      set
+      {
+        SetValue(ImageKeyProperty, value);
+      }
+    }
+
+    /// <summary>
     /// Gets or sets the initial image path string.
     /// </summary>
     public
@@ -196,7 +241,7 @@ namespace WpfMpdClient
       if (ImageUri == null)
         return;
 
-      string fromCache = DiskImageCache.GetFromCache(ImageUri);
+      string fromCache = DiskImageCache.GetFromCache(ImageUri, ImageKey);
       loadedImage = new BitmapImage();
       loadedImage.BeginInit();
       loadedImage.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
@@ -291,7 +336,7 @@ namespace WpfMpdClient
         EventArgs e)
     {
       Source = loadedImage;
-      DiskImageCache.AddToCache(loadedImage);
+      DiskImageCache.AddToCache(loadedImage, ImageKey);
     }
 
     private void OnDecodeFailed<TEventArgs>(object sender, TEventArgs e)

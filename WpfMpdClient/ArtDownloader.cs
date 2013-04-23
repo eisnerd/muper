@@ -210,6 +210,16 @@ namespace WpfMpdClient
         entry.ImageUrl = uri;
         return uri != null || entry.Tracks == null;
       }
+      else if (entry.Type == ListboxEntry.EntryType.Artist && entry.Artist != null)
+      {
+        var url = DiskImageCache.GetFromCache(new Uri(entry.Artist, UriKind.Relative), entry.Artist);
+        if (!string.IsNullOrEmpty(url))
+        {
+          m_Cache[entry.Key] = new Uri(url);
+          return true;
+        }
+      }
+
       return false;
     }
 
@@ -327,14 +337,14 @@ namespace WpfMpdClient
           if (m.Success)
             uri = ImageUri(System.IO.Path.Combine("cid", m.Groups[1].Value));
         }
-        if (uri == null && entry.Tracks != null)
+        if (url == null && uri == null && entry.Tracks != null)
           uri = ImageUri(entry.Tracks());
-        if (uri == null)
+        if (url == null && uri == null)
         {
           if (entry.Type == ListboxEntry.EntryType.Artist)
             url = LastfmScrobbler.GetArtistArt(entry.Artist, Scrobbler.ImageSize.medium);
           else
-              url = LastfmScrobbler.GetAlbumArt(entry.Artist, entry.Album, Scrobbler.ImageSize.medium);
+            url = LastfmScrobbler.GetAlbumArt(entry.Artist, entry.Album, Scrobbler.ImageSize.medium);
         }
         if (!string.IsNullOrEmpty(url))
           uri = new Uri(url);

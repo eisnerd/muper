@@ -104,7 +104,6 @@ namespace WpfMpdClient
     ArtDownloader m_ArtDownloader;
     ArtDownloader m_ArtistArtDownloader;
     ObservableCollection<ListboxEntry> m_ArtistsSource = new ObservableCollection<ListboxEntry>();
-    ObservableCollection<ListboxEntry> m_AlbumsSource = new ObservableCollection<ListboxEntry>();
     ObservableCollection<ListboxEntry> m_GenresAlbumsSource = new ObservableCollection<ListboxEntry>();
     ObservableCollection<MpdMessage> m_Messages = new ObservableCollection<MpdMessage>();
     ObservableCollection<MpdChannel> m_Channels = new ObservableCollection<MpdChannel>();
@@ -267,7 +266,7 @@ namespace WpfMpdClient
       Type t = typeof(ListboxEntry);
       lstArtist.SearchProperty = t.GetProperty("Artist");
 
-      lstAlbums.ItemsSource = m_AlbumsSource;
+      lstAlbums.ItemsSource = new MpdFile[0];
       lstAlbums.SearchProperty = t.GetProperty("Album");
 
       lstGenresAlbums.ItemsSource = m_GenresAlbumsSource;
@@ -592,14 +591,14 @@ namespace WpfMpdClient
         return;
 
       if (lstArtist.SelectedItem == null) {
-        m_AlbumsSource.Clear();
+        lstAlbums.ItemsSource = new MpdFile[0];
         return;
       }
 
-      m_AlbumsSource.Clear();
       var a = lstArtist.Selected();
       if (a != null) {
         string artist = a.Artist();
+       System.Threading.ThreadPool.QueueUserWorkItem(o => {
         List<string> albums = null;
         try{
           albums = m_Mpc.List(ScopeSpecifier.Album, ScopeSpecifier.Artist, artist);
@@ -609,7 +608,7 @@ namespace WpfMpdClient
         }
         albums.Sort();
         ListboxEntry last = null;
-        foreach (var _album in albums) {
+        var _albums = albums.Select(_album => {
           var album = string.IsNullOrEmpty(_album) ? Mpc.NoAlbum : _album;
           var m = recording.Match(album);
           var display = m.Success ? m.Groups[1].Value : album;
@@ -622,24 +621,27 @@ namespace WpfMpdClient
           };
           if (last != null && display.Equals(last.Display, StringComparison.CurrentCultureIgnoreCase))
           {
-            if (last.Related.Count == 0)
-              last.Related.Add(last);
-            last.Related.Add(entry);
-            entry.Related = last.Related;
+            var rel = last.Related ?? new ObservableCollection<ListboxEntry>();
+            if (rel.Count == 0)
+                rel.Add(last);
+            rel.Add(entry);
+            entry.Related = last.Related = rel;
             entry.Head = false;
           }
-          //else
-          {
-            m_AlbumsSource.Add(entry);
-            if (last != null && last.Related.Count == 0)
-              last.Display = last.Album;
-          }
+          if (last != null && last.Related == null)
+            last.Display = last.Album;
           last = entry;
-        }
-        if (albums.Count > 0){
-          lstAlbums.SelectedIndex = 0;
-          lstAlbums.ScrollIntoView(m_AlbumsSource[0]);
-        }
+          return entry;
+        }).ToList();
+        ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action)(() => {
+          lstAlbums.ItemsSource = _albums;
+          if (_albums.Count > 0)
+          {
+              lstAlbums.SelectedIndex = 0;
+              lstAlbums.ScrollIntoView(_albums[0]);
+          }
+        }));
+       }, System.Windows.Threading.Dispatcher.CurrentDispatcher);
         m_ArtistArtDownloader.Soon(a);
       }
     }
@@ -748,16 +750,19 @@ namespace WpfMpdClient
         var album = listBox.Selected();
         search[ScopeSpecifier.Album] = album.Album();
 
+       System.Threading.ThreadPool.QueueUserWorkItem(o => {
         if (album != null) {
           album.Related.Do(r => r.Selected = true);
           
           if (e != null) {
             var old = e.RemovedItems.OfType<ListboxEntry>().FirstOrDefault();
-            if (old != null && !album.Related.Contains(old))
+            if (old != null && !(album.Related != null && album.Related.Contains(old)))
               old.Related.Do(r => r.Selected = false);
           }
 
-          listBox.ScrollIntoView(album);
+          ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action)(() => {
+              listBox.ScrollIntoView(album);
+          }));
         }
 
         try{
@@ -795,9 +800,14 @@ namespace WpfMpdClient
           m_ArtDownloader.Soon(i);
         }));
         all.AddRange(selection.Values);
-        lstTracks.ItemsSource = all;
-        ScrollTracksToLeft();
-      } else {
+        ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action)(() => {
+          lstTracks.ItemsSource = all;
+          ScrollTracksToLeft();
+        }));
+       }, System.Windows.Threading.Dispatcher.CurrentDispatcher);
+      }
+      else
+      {
         m_Tracks = null;
         lstTracks.ItemsSource = null;
       }

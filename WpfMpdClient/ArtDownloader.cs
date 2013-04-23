@@ -34,7 +34,7 @@ namespace WpfMpdClient
     bool m_Head = true;
     bool m_Selected;
     string m_Display;
-    System.Collections.ObjectModel.ObservableCollection<ListboxEntry> m_Related = new System.Collections.ObjectModel.ObservableCollection<ListboxEntry>();
+    System.Collections.ObjectModel.ObservableCollection<ListboxEntry> m_Related;
     Uri m_ImageUrl = null;
 
     public enum EntryType

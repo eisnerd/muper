@@ -42,8 +42,9 @@ namespace WpfMpdClient
   {
     public static IEnumerable<T> Do<T>(this IEnumerable<T> ts, Action<T> a)
     {
-      foreach (var t in ts)
-        a(t);
+      if (ts != null)
+        foreach (var t in ts)
+          a(t);
       return ts;
     }
 

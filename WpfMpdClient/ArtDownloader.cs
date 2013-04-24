@@ -113,6 +113,8 @@ namespace WpfMpdClient
       }
     }
 
+    public string Grouping { get; set; }
+
     public System.Collections.ObjectModel.ObservableCollection<ListboxEntry> Related
     {
       get { return m_Related; }

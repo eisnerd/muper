@@ -622,7 +622,9 @@ namespace WpfMpdClient
       }
     }
 
-    static readonly System.Text.RegularExpressions.Regex recording = new System.Text.RegularExpressions.Regex(@"^(.*?)(,? +[Vv]ol.? +\d+,?)?(?: +[(]([^()]+)[)])*$", System.Text.RegularExpressions.RegexOptions.Compiled);
+    static readonly System.Text.RegularExpressions.Regex recording = new System.Text.RegularExpressions.Regex(@"^(.+?)(?i: music| works?| pieces?)?(?:, +[IVXivx\d/:-]*[IVXivx/:-][IVXivxa\d/:-]*\b|,? *\b(?:[Vv]ol.?|[Oo]p(?:.|us)?|Book) +[IVXivxa\d/:-]+(.*?))*(?:,? +[(]([^()]+)[)])*$", System.Text.RegularExpressions.RegexOptions.Compiled);
+    static readonly System.Text.RegularExpressions.Regex punct = new System.Text.RegularExpressions.Regex(@"(?:\W*[(][^()]+[)])*\W+");
+    static readonly System.Text.RegularExpressions.Regex numbers = new System.Text.RegularExpressions.Regex(@"\b(?:(0|zero|zero)|(1|one|un)|(2|two|deux)|(3|three|trois)|(4|four|quatre)|(5|five|cinq)|(6|six|six)|(7|seven|sept)|(8|eight|huit)|(9|nine|neuf)|(10|ten|dix)|(11|eleven|onze)|(12|twelve|douze)|(13|thirteen|treize)|(14|fourteen|quatorze)|(15|fifteen|quinze)|(16|sixteen|seize)|(17|seventeen|dix-sept)|(18|eighteen|dix-huit)|(19|nineteen|dix-neuf)|(?:(20|twenty|vingt)|(30|thirty|trente)|(40|fourty|quarante)|(50|fifty|cinquante)|(60|sixty|soixante)|(70|seventy|soixante-dix)|(80|eighty|quatre-vingts)|(90|ninety|quatre-vingt-dix))(?: (?:(0|zero|zero)|(1|one|(?:et )?un)|(2|two|deux)|(3|three|trois)|(4|four|quatre)|(5|five|cinq)|(6|six|six)|(7|seven|sept)|(8|eight|huit)|(9|nine|neuf)|(10|ten|dix)|(11|eleven|onze)))?|(\d+))\b".Replace(" ", @"\W+"), System.Text.RegularExpressions.RegexOptions.Compiled);
     private void lstArtist_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       if (m_Mpc == null || !m_Mpc.Connected)
@@ -645,20 +647,27 @@ namespace WpfMpdClient
           ShowException(ex);
           return;
         }
-        albums.Sort();
         ListboxEntry last = null;
         var _albums = albums.Select(_album => {
           var album = string.IsNullOrEmpty(_album) ? Mpc.NoAlbum : _album;
-          var m = recording.Match(album);
-          var display = m.Success ? m.Groups[1].Value : album;
-          ListboxEntry entry = new ListboxEntry()
+          var display = recording.Replace(album, "$1$2");
+          var grouping = numbers.Replace(punct.Replace(display, " ").ToLower(), x =>
+            numbers.GetGroupNumbers().Select(i =>
+              i > 0 && x.Groups[i].Success ? (i < 22 ? i - 1 : i < 29 ? 20 + (i - 21) * 20 : i < 41? i - 29 : int.Parse(x.Groups[i].Value)) : 0
+            ).Sum().ToString("ZZ000")
+          );
+          return new ListboxEntry()
           {
             Type = ListboxEntry.EntryType.Album,
             Artist = artist,
             Album = album,
             Display = display,
+            Grouping = grouping,
           };
-          if (last != null && display.Equals(last.Display, StringComparison.CurrentCultureIgnoreCase))
+        })
+        .OrderBy(entry => entry.Grouping).ThenBy(entry => entry.Album)
+        .Select(entry => {
+          if (last != null && entry.Grouping == last.Grouping)
           {
             var rel = last.Related ?? new ObservableCollection<ListboxEntry>();
             if (rel.Count == 0)

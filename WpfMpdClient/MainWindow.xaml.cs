@@ -819,14 +819,14 @@ namespace WpfMpdClient
           }));
         }
 
-        IList<KeyValuePair<string, Uri>> Info = null;
+        IList<object> Info = null;
         try{
           m_Tracks = m_Mpc.Find(search);
           if (album != null) {
             album.Tracks = () => m_Tracks;
             Info = album.Info;
             if (Info == null)
-              Info = album.Info = new ObservableCollection<KeyValuePair<string, Uri>>();
+              Info = album.Info = new ObservableCollection<object>();
             m_ArtDownloader.Now(album);
           }
         }
@@ -846,13 +846,17 @@ namespace WpfMpdClient
               ArtDownloader.Listing(g.Key,
                 x => x.EndsWith("pdf") || x.EndsWith("html") || x.EndsWith("txt"),
                 us => ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action)(() => {
-                  us.Do(u => {
+                  us.GroupBy(u => Path.GetFileNameWithoutExtension(u.LocalPath)).Do(x => {
+                    var u = x.FirstOrDefault(y => y.LocalPath.ToLower().Contains("pdf")) ?? x.FirstOrDefault();
                     var p = (u.Segments.LastOrDefault() ?? "").ToLower();
-                    info.Add(new KeyValuePair<string, Uri>(
-                      p.Contains("booklet") ? "Booklet" :
-                      p.Contains("pdf") ? "PDF" :
-                      "Information",
-                      u));
+                    info.Add(new {
+                      Kind =
+                        p.Contains("booklet") ? "Booklet" :
+                        p.Contains("pdf") ? "PDF" :
+                        "Information",
+                      Label = x.Key,
+                      Uri = u,
+                    });
                   });
                 })));
             return true;
@@ -1812,10 +1816,13 @@ namespace WpfMpdClient
 
     private void lstInfoItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        var o = sender as FrameworkElement;
-        var u = o == null ? null : o.DataContext as KeyValuePair<string, Uri>?;
-        if (u.HasValue)
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(u.Value.Value.ToString()) { Verb = "Open" });
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(
+                ((dynamic)(sender as FrameworkElement).DataContext).Uri.ToString()
+            ) { Verb = "Open" });
+        }
+        catch { }
     }
   }
 }

@@ -127,6 +127,8 @@ namespace WpfMpdClient
 
     public Func<IEnumerable<MpdFile>> Tracks { get; set; }
 
+    public IList<ListboxEntry> Albums { get; set; }
+
     public static string ArtistKey(string Artist)
     {
       return string.Format("{0}_{1}_", EntryType.Artist.ToString(), Artist);

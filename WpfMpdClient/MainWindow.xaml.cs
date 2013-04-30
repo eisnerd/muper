@@ -636,7 +636,10 @@ namespace WpfMpdClient
       }
 
       var a = lstArtist.Selected();
-      if (a != null) {
+      if (a != null)
+        if (a.Albums != null)
+          lstAlbums_Show(a.Albums);
+        else {
         ArtistLabel.DataContext = a;
         string artist = a.Artist();
        System.Threading.ThreadPool.QueueUserWorkItem(o => {
@@ -648,7 +651,7 @@ namespace WpfMpdClient
           return;
         }
         ListboxEntry last = null;
-        var _albums = albums.Select(_album => {
+        a.Albums = albums.Select(_album => {
           var album = string.IsNullOrEmpty(_album) ? Mpc.NoAlbum : _album;
           var display = recording.Replace(album, "$1$2");
           var grouping = numbers.Replace(punct.Replace(display, " ").ToLower(), x =>
@@ -681,16 +684,19 @@ namespace WpfMpdClient
           last = entry;
           return entry;
         }).ToList();
-        ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action)(() => {
-          lstAlbums.ItemsSource = _albums;
-          if (_albums.Count > 0)
-          {
-              lstAlbums.SelectedIndex = 0;
-              lstAlbums.ScrollIntoView(_albums[0]);
-          }
-        }));
+        ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action<IList<ListboxEntry>>)lstAlbums_Show, a.Albums);
        }, System.Windows.Threading.Dispatcher.CurrentDispatcher);
         m_ArtistArtDownloader.Soon(a);
+      }
+    }
+
+    void lstAlbums_Show(IList<ListboxEntry> source)
+    {
+      lstAlbums.ItemsSource = source;
+      if (source.Count > 0)
+      {
+        lstAlbums.SelectedIndex = 0;
+        lstAlbums.ScrollIntoView(source[0]);
       }
     }
 
@@ -1601,8 +1607,8 @@ namespace WpfMpdClient
       if (stackPanel != null){
         ListboxEntry entry = stackPanel.DataContext as ListboxEntry;
         if (entry != null) {
-          if (entry.Type == ListboxEntry.EntryType.Artist)
-            entry.Tracks = () => m_Mpc.List(ScopeSpecifier.Filename, ScopeSpecifier.Artist, entry.Artist).Select(f => new MpdFile(f));
+          //if (entry.Type == ListboxEntry.EntryType.Artist)
+            //entry.Tracks = () => m_Mpc.List(ScopeSpecifier.Filename, ScopeSpecifier.Artist, entry.Artist).Select(f => new MpdFile(f));
           m_ArtDownloader.Soon(entry);
         }
       }

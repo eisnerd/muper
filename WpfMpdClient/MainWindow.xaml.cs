@@ -819,10 +819,14 @@ namespace WpfMpdClient
           }));
         }
 
+        IList<KeyValuePair<string, Uri>> Info = null;
         try{
           m_Tracks = m_Mpc.Find(search);
           if (album != null) {
             album.Tracks = () => m_Tracks;
+            Info = album.Info;
+            if (Info == null)
+              Info = album.Info = new ObservableCollection<KeyValuePair<string, Uri>>();
             m_ArtDownloader.Now(album);
           }
         }
@@ -836,6 +840,23 @@ namespace WpfMpdClient
         var all = m_Tracks
           .OrderBy(m => m.Disc * 1000 + m.TrackNo)
           .GroupBy(m => dir.Replace(m.File, "$1"))
+          .Where(g => {
+            var info = Info;
+            if (info != null && info.Count == 0)
+              ArtDownloader.Listing(g.Key,
+                x => x.EndsWith("pdf") || x.EndsWith("html") || x.EndsWith("txt"),
+                us => ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action)(() => {
+                  us.Do(u => {
+                    var p = (u.Segments.LastOrDefault() ?? "").ToLower();
+                    info.Add(new KeyValuePair<string, Uri>(
+                      p.Contains("booklet") ? "Booklet" :
+                      p.Contains("pdf") ? "PDF" :
+                      "Information",
+                      u));
+                  });
+                })));
+            return true;
+          })
           .SelectMany(Utilities.Try<IGrouping<string, MpdFile>, IEnumerable<MpdFile>>(g =>
             m_Mpc.ListAllInfo(g.Key)
               .OrderBy(m => m.Disc * 1000 + m.TrackNo)
@@ -855,6 +876,8 @@ namespace WpfMpdClient
         }));
         all.AddRange(selection.Values);
         ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action)(() => {
+          if (album != null)
+            lstInfo.ItemsSource = album.Info;
           lstTracks.ItemsSource = all;
           ScrollTracksToLeft();
         }));
@@ -1785,6 +1808,14 @@ namespace WpfMpdClient
       var i = lstAlbums.InputHitTest(e.GetPosition(lstAlbums)) as FrameworkElement;
       if (i != null && i.DataContext != null && i.DataContext == lstAlbums.SelectedItem)
         context.View = true;
+    }
+
+    private void lstInfoItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        var o = sender as FrameworkElement;
+        var u = o == null ? null : o.DataContext as KeyValuePair<string, Uri>?;
+        if (u.HasValue)
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(u.Value.Value.ToString()) { Verb = "Open" });
     }
   }
 }

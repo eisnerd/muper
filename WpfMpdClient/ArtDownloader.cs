@@ -129,6 +129,8 @@ namespace WpfMpdClient
 
     public IList<ListboxEntry> Albums { get; set; }
 
+    public IList<object> Info { get; set; }
+
     public static string ArtistKey(string Artist)
     {
       return string.Format("{0}_{1}_", EntryType.Artist.ToString(), Artist);
@@ -285,6 +287,33 @@ namespace WpfMpdClient
           return resp.StatusCode == System.Net.HttpStatusCode.OK;
       }
       catch { return false; }
+    }
+
+    static readonly System.Text.RegularExpressions.Regex listing = new System.Text.RegularExpressions.Regex(@"<a href=""([^""]*[^""/])"">.*\b([1-9]|\d{2,})\s*$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Multiline);
+    public static void Listing(Uri uri, Func<string, bool> where, Action<IEnumerable<Uri>> result)
+    {
+      try
+      {
+        var req = System.Net.WebRequest.Create(uri);
+        var resp = (System.Net.HttpWebResponse)req.GetResponse();
+        var s = new System.IO.StreamReader(resp.GetResponseStream());
+        s.ReadToEndAsync().ContinueWith(r => {
+          using (resp)
+          using (s)
+            result(listing
+              .Matches(r.Result ?? "")
+              .OfType<System.Text.RegularExpressions.Match>()
+              .Select(m => m.Groups[1].Value)
+              .Where(where)
+              .Select(x => new Uri(uri, x)));
+        });
+      }
+      catch { }
+    }
+
+    public static void Listing(string path, Func<string, bool> where, Action<IEnumerable<Uri>> result)
+    {
+      Listing(new Uri(new Uri("http://" + Settings.Instance.ServerAddress), System.IO.Path.Combine(path, "./")), where, result);
     }
 
     public static IEnumerable<Uri> ImageUris(IEnumerable<string> paths)

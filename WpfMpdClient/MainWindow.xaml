@@ -423,7 +423,23 @@
                            PreviewMouseLeftButtonDown="Label_PreviewMouseLeftButtonDown_1"
                            Foreground="LightGray"
                            Visibility="{Binding Tracks.Hide}"><![CDATA[<]]></Label>
-                    <ListView Margin="2" Grid.Column="1" x:Name="lstTracks" SelectionMode="Extended" SelectionChanged="lstTracks_SelectionChanged" MouseDoubleClick="lstTracks_MouseDoubleClick" Visibility="{Binding Tracks.Show}">
+                    <DockPanel LastChildFill="True" Grid.Column="1" Visibility="{Binding Tracks.Show}">
+                    <Border Margin="2 0" BorderThickness="0 0 0 2" BorderBrush="LightGray" DockPanel.Dock="Bottom" />
+                    <ItemsControl Margin="2" x:Name="lstInfo" DockPanel.Dock="Bottom">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="10 2" Height="23" MouseLeftButtonDown="lstInfoItem_MouseLeftButtonDown">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Key}" Margin="0 0 5 0"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Value.LocalPath}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ListView Margin="2" x:Name="lstTracks" SelectionMode="Extended" SelectionChanged="lstTracks_SelectionChanged" MouseDoubleClick="lstTracks_MouseDoubleClick">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Style.Triggers>
@@ -511,6 +527,7 @@
                             </DataTemplate>
                             </ListView.ItemTemplate>
                     </ListView>
+                    </DockPanel>
                     <!--local:ConfigurableListView Margin="2" Grid.Column="1" x:Name="lstTracks" SelectionMode="Extended" SelectionChanged="lstTracks_SelectionChanged" >
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">

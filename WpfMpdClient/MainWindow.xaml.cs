@@ -261,17 +261,15 @@ namespace WpfMpdClient
       m_ArtistArtDownloader = new ArtDownloader(m_Settings, 2);
 
       m_Mpc = new Mpc();
-      m_Mpc.OnConnected += MpcConnected;
-      m_Mpc.OnDisconnected += MpcDisconnected;
+      m_Mpc.OnConnected += c => Dispatcher.BeginInvoke((MpcEventDelegate)MpcConnected, c);
+      m_Mpc.OnDisconnected += c => Dispatcher.BeginInvoke((MpcEventDelegate)MpcDisconnected, c);
 
       m_MpcIdle = new Mpc();
-      m_MpcIdle.OnConnected += MpcIdleConnected;
+      m_MpcIdle.OnConnected += c => Dispatcher.BeginInvoke((MpcEventDelegate)MpcIdleConnected, c);
       m_MpcIdle.OnSubsystemsChanged += MpcIdleSubsystemsChanged;
 
       DataContext = context = new Context(m_Mpc);
       context.Playlist = new ObservableCollection<MpdFile>();
-
-      Connect();
 
       cmbSearch.SelectedIndex = 0;
 
@@ -441,10 +439,12 @@ namespace WpfMpdClient
       }
     }
 
-    private void Connect()
+    private void Connect(System.Windows.Threading.Dispatcher Dispatcher)
     {
       if (!string.IsNullOrEmpty(m_Settings.ServerAddress)) {
-        txtStatus.Text = string.Format("Connecting to {0}:{1}...", m_Settings.ServerAddress, m_Settings.ServerPort);
+        Dispatcher.BeginInvoke((System.Action)(() => {
+          txtStatus.Text = string.Format("Connecting to {0}:{1}...", m_Settings.ServerAddress, m_Settings.ServerPort);
+        }));
         try {
           IPAddress[] addresses = System.Net.Dns.GetHostAddresses(m_Settings.ServerAddress);
           if (addresses.Length > 0) {
@@ -462,8 +462,9 @@ namespace WpfMpdClient
           }
         }
         catch (Exception ex) {
-          txtStatus.Text = string.Empty;
-          MessageBox.Show(string.Format("Error connecting to server:\r\n{0}\r\n{1}", ex.Message, ex.StackTrace), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+          Dispatcher.BeginInvoke((System.Action)(() => {
+            txtStatus.Text = string.Empty;
+          }));
         }
       }
     } // Connect
@@ -927,19 +928,22 @@ namespace WpfMpdClient
         m_Mpc.Connection.Disconnect();
       if (m_MpcIdle.Connected)
         m_MpcIdle.Connection.Disconnect();
+
       Connect();
       tabBrowse.SelectedIndex = 0;
       m_IgnoreDisconnect = false;
+    }
+
+    void Connect()
+    {
+        ((System.Action<System.Windows.Threading.Dispatcher>)Connect).BeginInvoke(Dispatcher, a => { }, null);
     }
 
     private void ReconnectTimerHandler(object sender, ElapsedEventArgs e)
     {
       m_ReconnectTimer.Stop();
       m_ReconnectTimer = null;
-      Dispatcher.BeginInvoke(new Action(() =>
-      {
-        Connect();
-      }));
+      Connect(Dispatcher);
     } // ReconnectTimerHandler
 
     private void StartTimerHandler(object sender, ElapsedEventArgs e)
@@ -947,10 +951,7 @@ namespace WpfMpdClient
       if (m_StartTimer != null)
         m_StartTimer.Stop();
       m_StartTimer = null;
-      Dispatcher.BeginInvoke(new Action(() =>
-      {
-        Connect();
-      }));
+      Connect(Dispatcher);
     } // StartTimerHandler
 
     private void PopulatePlaylist()

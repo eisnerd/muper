@@ -655,7 +655,7 @@ namespace WpfMpdClient
           lstAlbums_Show(a.Albums);
         else {
         string artist = a.Artist();
-       System.Threading.ThreadPool.QueueUserWorkItem(o => {
+       Action<Action<Action>> populate = call => {
         List<string> albums = null;
         try{
           albums = m_Mpc.List(ScopeSpecifier.Album, ScopeSpecifier.Artist, artist);

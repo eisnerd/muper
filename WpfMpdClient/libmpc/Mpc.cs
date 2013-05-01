@@ -361,7 +361,7 @@ namespace Libmpc
       if (path == null)
         response = this.getConnection().Exec("listall");
       else
-        response = this.getConnection().Exec("listall", new string[] { path });
+        response = this.getConnection().Exec("listall", new string[] { EscapeString(path) });
 
       if (response.IsError)
         throw new MpdResponseException(response.ErrorCode, response.ErrorMessage);
@@ -378,7 +378,7 @@ namespace Libmpc
       if (path == null)
         throw new ArgumentNullException("path");
 
-      MpdResponse response = this.getConnection().Exec("listallinfo", new string[] { path });
+      MpdResponse response = this.getConnection().Exec("listallinfo", new string[] { EscapeString(path) });
 
       if (response.IsError)
         throw new MpdResponseException(response.ErrorCode, response.ErrorMessage);
@@ -404,10 +404,9 @@ namespace Libmpc
       MpdResponse response;
       if (path == null)
         response = this.getConnection().Exec("lsinfo");
-      else {
-        path = EscapeString(path);
-        response = this.getConnection().Exec("lsinfo", new string[] { path });
-      }
+      else
+        response = this.getConnection().Exec("lsinfo", new string[] { EscapeString(path) });
+
       if (response.IsError)
         throw new MpdResponseException(response.ErrorCode, response.ErrorMessage);
 

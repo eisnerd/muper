@@ -342,10 +342,10 @@ namespace Libmpc
     private MpdResponse readResponse()
     {
       List<string> ret = new List<string>();
-      string line = this.reader.ReadLine();
+      string line = this.reader.ReadLine() ?? "";
       while (!(line.Equals(OK) || line.StartsWith(ACK))) {
         ret.Add(line);
-        line = this.reader.ReadLine();
+        line = this.reader.ReadLine() ?? "";
       }
       if (line.Equals(OK))
         return new MpdResponse(new ReadOnlyCollection<string>(ret));

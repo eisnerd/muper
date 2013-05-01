@@ -365,6 +365,18 @@ namespace WpfMpdClient
           m.Visibility = status.State == MpdState.Play ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
 
           MpdFile file = m_Mpc.CurrentSong();
+          if (file != null)
+          {
+            ListboxEntry album;
+            if (Albums.TryGetValue(file.Artist + ":" + file.Album, out album))
+              file.AlbumEntry = album;
+            else
+            {
+              file.AlbumEntry = album = new ListboxEntry();
+              album.Info = new ObservableCollection<object>();
+              FindInfo(album.Info, dir.Replace(file.File, "$1"), Dispatcher);
+            }
+          }
           playerControl.Update(status, file);          
           if (m_MiniPlayer != null)
             m_MiniPlayer.Update(status, file);
@@ -637,11 +649,11 @@ namespace WpfMpdClient
       }
 
       var a = lstArtist.Selected();
+      ArtistLabel.DataContext = a;
       if (a != null)
         if (a.Albums != null)
           lstAlbums_Show(a.Albums);
         else {
-        ArtistLabel.DataContext = a;
         string artist = a.Artist();
        System.Threading.ThreadPool.QueueUserWorkItem(o => {
         List<string> albums = null;
@@ -685,8 +697,13 @@ namespace WpfMpdClient
           last = entry;
           return entry;
         }).ToList();
-        ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action<IList<ListboxEntry>>)lstAlbums_Show, a.Albums);
-       }, System.Windows.Threading.Dispatcher.CurrentDispatcher);
+        call(() => lstAlbums_Show(a.Albums));
+       };
+       if (navigating)
+         populate(x => x());
+       else
+         populate.BeginInvoke((Action<Action>)(x => Dispatcher.BeginInvoke(x)), populate.EndInvoke, null);
+
         m_ArtistArtDownloader.Soon(a);
       }
     }
@@ -779,6 +796,8 @@ namespace WpfMpdClient
 
     }
 
+    static readonly System.Collections.Concurrent.ConcurrentDictionary<string, ListboxEntry> Albums = new System.Collections.Concurrent.ConcurrentDictionary<string, ListboxEntry>();
+
     static readonly System.Text.RegularExpressions.Regex dir = new System.Text.RegularExpressions.Regex(@"^(.*)/(?:\\/|[^/]*)$");
     private void lstAlbums_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -805,7 +824,7 @@ namespace WpfMpdClient
         var album = listBox.Selected();
         search[ScopeSpecifier.Album] = album.Album();
 
-       System.Threading.ThreadPool.QueueUserWorkItem(o => {
+       Action<Action<Action>> populate = call => {
         if (album != null) {
           album.Related.Do(r => r.Selected = true);
           
@@ -815,19 +834,18 @@ namespace WpfMpdClient
               old.Related.Do(r => r.Selected = false);
           }
 
-          ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action)(() => {
+          call(() => {
               listBox.ScrollIntoView(album);
-          }));
+          });
         }
 
-        IList<object> Info = null;
         try{
           m_Tracks = m_Mpc.Find(search);
           if (album != null) {
+            Albums[album.Artist + ":" + album.Album] = album;
             album.Tracks = () => m_Tracks;
-            Info = album.Info;
-            if (Info == null)
-              Info = album.Info = new ObservableCollection<object>();
+            if (album.Info == null)
+              album.Info = new ObservableCollection<object>();
             m_ArtDownloader.Now(album);
           }
         }
@@ -842,24 +860,8 @@ namespace WpfMpdClient
           .OrderBy(m => m.Disc * 1000 + m.TrackNo)
           .GroupBy(m => dir.Replace(m.File, "$1"))
           .Where(g => {
-            var info = Info;
-            if (info != null && info.Count == 0)
-              ArtDownloader.Listing(g.Key,
-                x => x.EndsWith("pdf") || x.EndsWith("html") || x.EndsWith("txt"),
-                us => ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action)(() => {
-                  us.GroupBy(u => Path.GetFileNameWithoutExtension(u.LocalPath)).Do(x => {
-                    var u = x.FirstOrDefault(y => y.LocalPath.ToLower().Contains("pdf")) ?? x.FirstOrDefault();
-                    var p = (u.Segments.LastOrDefault() ?? "").ToLower();
-                    info.Add(new {
-                      Kind =
-                        p.Contains("booklet") ? "Booklet" :
-                        p.Contains("pdf") ? "PDF" :
-                        "Information",
-                      Label = x.Key,
-                      Uri = u,
-                    });
-                  });
-                })));
+            if (album != null)
+              FindInfo(album.Info, g.Key, Dispatcher);
             return true;
           })
           .SelectMany(Utilities.Try<IGrouping<string, MpdFile>, IEnumerable<MpdFile>>(g =>
@@ -880,19 +882,44 @@ namespace WpfMpdClient
           m_ArtDownloader.Soon(i);
         }));
         all.AddRange(selection.Values);
-        ((System.Windows.Threading.Dispatcher)o).BeginInvoke((System.Action)(() => {
+        call(() => {
           if (album != null)
             lstInfo.ItemsSource = album.Info;
           lstTracks.ItemsSource = all;
           ScrollTracksToLeft();
-        }));
-       }, System.Windows.Threading.Dispatcher.CurrentDispatcher);
+        });
+       };
+       if (navigating)
+         populate(x => x());
+       else
+         populate.BeginInvoke((Action<Action>)(x => Dispatcher.BeginInvoke(x)), populate.EndInvoke, null);
       }
       else
       {
         m_Tracks = null;
         lstTracks.ItemsSource = null;
       }
+    }
+
+    public static void FindInfo(IList<object> info, string dir, System.Windows.Threading.Dispatcher Dispatcher)
+    {
+      if (info != null && info.Count == 0)
+        ArtDownloader.Listing(dir,
+          x => x.EndsWith("pdf") || x.EndsWith("html") || x.EndsWith("txt"),
+          us => (Dispatcher).BeginInvoke((System.Action)(() => {
+            us.GroupBy(u => Path.GetFileNameWithoutExtension(u.LocalPath)).Do(x => {
+              var u = x.FirstOrDefault(y => y.LocalPath.ToLower().Contains("pdf")) ?? x.FirstOrDefault();
+              var p = (u.Segments.LastOrDefault() ?? "").ToLower();
+              info.Add(new {
+                Kind =
+                p.Contains("booklet") ? "Booklet" :
+                p.Contains("pdf") ? "PDF" :
+                "Information",
+                Label = x.Key,
+                Uri = u,
+              });
+            });
+          })));
     }
 
     private void btnApplySettings_Click(object sender, RoutedEventArgs e)
@@ -1168,6 +1195,62 @@ namespace WpfMpdClient
       }
     }
 
+    private void lstPlaylist_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      if (m_Mpc == null || !m_Mpc.Connected)
+        return;
+
+      ListBoxItem item = sender as ListBoxItem;
+      if (item != null) {
+        MpdFile file = item.DataContext as MpdFile;
+        if (file != null) {
+          try{
+            NavigateTo(file);
+            e.Handled = true;
+          }catch (Exception ex){
+            ShowException(ex);
+            return;
+          }
+        }
+      }
+    }
+
+    bool Select(ListBox list, object item)
+    {
+      try
+      {
+        if (item == null)
+          return false;
+        list.SelectedItem = item;
+        list.ScrollIntoView(item);
+        return true;
+      }
+      catch
+      {
+        return false;
+      }
+    }
+
+    bool navigating = false;
+    void NavigateTo(MpdFile file)
+    {
+      try
+      {
+        navigating = true;
+        if ((lstArtist.SelectedItems.OfType<ListboxEntry>().Any(m => m.Artist == file.Artist)
+          || Select(lstArtist, lstArtist.Items.OfType<ListboxEntry>().FirstOrDefault(m => m.Artist == file.Artist)))
+          && Select(lstAlbums, lstAlbums.Items.OfType<ListboxEntry>().FirstOrDefault(m => m.Album == file.Album))
+          && Select(lstTracks, lstTracks.Items.OfType<MpdFile>().FirstOrDefault(m => m.File == file.File)))
+        {
+          tabControl.SelectedIndex = 0;
+          tabBrowse.SelectedIndex = 0;
+          context.View = true;
+        }
+      } finally {
+        navigating = false;
+      }
+    }
+
     private void lstTracks_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
       if (m_Mpc == null || !m_Mpc.Connected)
@@ -1182,27 +1265,7 @@ namespace WpfMpdClient
           try
           {
             if (file.Supplement)
-            {
-              tabBrowse.SelectedIndex = 0;
-              object item;
-
-              if (!lstArtist.SelectedItems.OfType<ListboxEntry>().Any(m => m.Artist == file.Artist)
-                && (item = lstArtist.Items.OfType<ListboxEntry>().First(m => m.Artist == file.Artist)) != null)
-              {
-                lstArtist.SelectedItem = item;
-                lstArtist.ScrollIntoView(item);
-              }
-              if ((item = lstAlbums.Items.OfType<ListboxEntry>().First(m => m.Album == file.Album)) != null)
-              {
-                lstAlbums.SelectedItem = item;
-                lstAlbums.ScrollIntoView(item);
-              }
-              if ((item = lstTracks.Items.OfType<MpdFile>().First(m => m.File == file.File)) != null)
-              {
-                lstTracks.SelectedItem = item;
-                lstTracks.ScrollIntoView(item);
-              }
-            }
+              NavigateTo(file);
             else
               m_Mpc.Add(file.File);
           }

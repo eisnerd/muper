@@ -121,6 +121,7 @@ namespace WpfMpdClient
       this.currentSong = currentSong;
       if (status == null)
         return;
+      DataContext = currentSong;
 
       m_Status = status;
       btnShuffle.IsChecked = status.Random;
@@ -305,6 +306,17 @@ namespace WpfMpdClient
           lblTimeAfter.Content = Utilities.FormatSeconds((int)sliTime.Maximum - (int)sliTime.Value);
         }));
       }
+    }
+
+    private void lstInfoItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(
+                ((dynamic)(sender as FrameworkElement).DataContext).Uri.ToString()
+            ) { Verb = "Open" });
+        }
+        catch { }
     }
   }
 }

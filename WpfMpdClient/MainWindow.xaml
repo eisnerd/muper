@@ -217,9 +217,14 @@
                                                 </Setter>
                                                 <Setter Property="ContentTemplate" Value="{StaticResource DefaultItemTemplate}" />
                                                 <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Lone}" Value="False">
+                                                        <!-- change what the selected item looks like -->
+                                                        <Setter Property="FontWeight" Value="Bold" />
+                                                    </DataTrigger>
                                                     <DataTrigger Binding="{Binding Selected}" Value="True">
                                                         <!-- change what the selected item looks like -->
                                                         <Setter Property="ContentTemplate" Value="{StaticResource SelectedItemTemplate}" />
+                                                        <Setter Property="FontWeight" Value="Normal" />
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding Visible}" Value="False">
                                                         <!-- change what the selected item looks like -->

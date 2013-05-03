@@ -33,6 +33,7 @@ namespace WpfMpdClient
     string m_Album;
     bool m_Head = true;
     bool m_Selected;
+    bool m_Lone;
     string m_Display;
     System.Collections.ObjectModel.ObservableCollection<ListboxEntry> m_Related;
     Uri m_ImageUrl = null;
@@ -105,12 +106,17 @@ namespace WpfMpdClient
 
     public string Display
     {
-      get { return m_Display; }
+      get { return Lone ? Album : m_Display; }
       set
       {
         m_Display = value;
         OnPropertyChanged("Display");
       }
+    }
+
+    public bool Lone
+    {
+      get { return Related == null; }
     }
 
     public string Grouping { get; set; }
@@ -122,6 +128,8 @@ namespace WpfMpdClient
       {
         m_Related = value;
         OnPropertyChanged("Related");
+        OnPropertyChanged("Display");
+        OnPropertyChanged("Lone");
       }
     }
 

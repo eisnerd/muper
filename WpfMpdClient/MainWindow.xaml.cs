@@ -694,8 +694,6 @@ namespace WpfMpdClient
             entry.Related = last.Related = rel;
             entry.Head = false;
           }
-          if (last != null && last.Related == null)
-            last.Display = last.Album;
           last = entry;
           return entry;
         }).ToList();

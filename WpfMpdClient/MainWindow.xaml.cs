@@ -656,7 +656,7 @@ namespace WpfMpdClient
         else {
         string artist = a.Artist();
        Action<Action<Action>> populate = call => {
-        List<string> albums = null;
+        IEnumerable<string> albums = null;
         try{
           albums = m_Mpc.List(ScopeSpecifier.Album, ScopeSpecifier.Artist, artist);
         }catch (Exception ex){
@@ -664,6 +664,8 @@ namespace WpfMpdClient
           return;
         }
         ListboxEntry last = null;
+        if (a.Artist == "Misc")
+          albums = albums.Where(_album => _album != "Misc");
         a.Albums = albums.Select(_album => {
           var album = string.IsNullOrEmpty(_album) ? Mpc.NoAlbum : _album;
           var display = recording.Replace(album, "$1$2");
@@ -854,7 +856,7 @@ namespace WpfMpdClient
             .OrderBy(m => m.Disc * 1000 + m.TrackNo)
             .GroupBy(m => dir.Replace(m.File, "$1"))
             .Where(g => {
-              if (album != null)
+              if (album != null && album.Album != "Misc")
                 FindInfo(album.Info, g.Key, Dispatcher);
               return true;
             })

@@ -839,7 +839,7 @@ namespace WpfMpdClient
           });
         }
 
-        try{
+        try {
           m_Tracks = m_Mpc.Find(search);
           if (album != null) {
             Albums[album.Artist + ":" + album.Album] = album;
@@ -848,46 +848,46 @@ namespace WpfMpdClient
               album.Info = new ObservableCollection<object>();
             m_ArtDownloader.Now(album);
           }
+          m_Tracks.Do(m => m.AlbumEntry = album);
+          var selection = m_Tracks.ToDictionary(m => m.File);
+          var all = m_Tracks
+            .OrderBy(m => m.Disc * 1000 + m.TrackNo)
+            .GroupBy(m => dir.Replace(m.File, "$1"))
+            .Where(g => {
+              if (album != null)
+                FindInfo(album.Info, g.Key, Dispatcher);
+              return true;
+            })
+            .SelectMany(Utilities.Try<IGrouping<string, MpdFile>, IEnumerable<MpdFile>>(g =>
+              m_Mpc.ListAllInfo(g.Key)
+                .OrderBy(m => m.Disc * 1000 + m.TrackNo)
+                .Where(m => (m.Supplement = !selection.Remove(m.File)) || true)
+            ))
+            .ToList();
+          all.GroupBy(m => m.Artist).Do(a =>
+            a.GroupBy(m => m.Album).Do(b => {
+            var i = new ListboxEntry() {
+              Type = ListboxEntry.EntryType.Album,
+              Artist = a.Key,
+              Album = b.Key,
+              Tracks = () => b,
+            };
+            b.Do(m => m.AlbumEntry = i);
+            m_ArtDownloader.Soon(i);
+          }));
+          all.AddRange(selection.Values);
+          call(() => {
+            if (album != null)
+              lstInfo.ItemsSource = album.Info;
+            lstTracks.ItemsSource = all;
+            ScrollTracksToLeft();
+          });
         }
         catch (Exception ex)
         {
-          ShowException(ex);
-          return;
+            ShowException(ex);
+            return;
         }
-        m_Tracks.Do(m => m.AlbumEntry = album);
-        var selection = m_Tracks.ToDictionary(m => m.File);
-        var all = m_Tracks
-          .OrderBy(m => m.Disc * 1000 + m.TrackNo)
-          .GroupBy(m => dir.Replace(m.File, "$1"))
-          .Where(g => {
-            if (album != null)
-              FindInfo(album.Info, g.Key, Dispatcher);
-            return true;
-          })
-          .SelectMany(Utilities.Try<IGrouping<string, MpdFile>, IEnumerable<MpdFile>>(g =>
-            m_Mpc.ListAllInfo(g.Key)
-              .OrderBy(m => m.Disc * 1000 + m.TrackNo)
-              .Where(m => (m.Supplement = !selection.Remove(m.File)) || true)
-          ))
-          .ToList();
-        all.GroupBy(m => m.Artist).Do(a =>
-          a.GroupBy(m => m.Album).Do(b => {
-          var i = new ListboxEntry() {
-            Type = ListboxEntry.EntryType.Album,
-            Artist = a.Key,
-            Album = b.Key,
-            Tracks = () => b,
-          };
-          b.Do(m => m.AlbumEntry = i);
-          m_ArtDownloader.Soon(i);
-        }));
-        all.AddRange(selection.Values);
-        call(() => {
-          if (album != null)
-            lstInfo.ItemsSource = album.Info;
-          lstTracks.ItemsSource = all;
-          ScrollTracksToLeft();
-        });
        };
        if (navigating)
          populate(x => x());

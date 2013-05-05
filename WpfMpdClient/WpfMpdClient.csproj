@@ -107,6 +107,7 @@
     </ApplicationDefinition>
     <Compile Include="About.cs" />
     <Compile Include="ArtDownloader.cs" />
+    <Compile Include="UI Utilities\BooleanConverters.cs" />
     <Compile Include="BrowserWindow.xaml.cs">
       <DependentUpon>BrowserWindow.xaml</DependentUpon>
     </Compile>
@@ -121,6 +122,8 @@
       <DependentUpon>MiniPlayerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MouseUtilities.cs" />
+    <Compile Include="UI Utilities\NegatingConverter.cs" />
+    <Compile Include="UI Utilities\NumberConverters.cs" />
     <Compile Include="PlayerControl.xaml.cs">
       <DependentUpon>PlayerControl.xaml</DependentUpon>
     </Compile>

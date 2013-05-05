@@ -366,7 +366,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ApplicationBar.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.ApplicationBar" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ApplicationBar</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.ApplicationBar.ArrangeOverride(System.Windows.Size)">
       <summary>Вызывается, чтобы разместить и масштабировать содержимое объекта <see cref="T:System.Windows.Controls.Control" />.</summary>
@@ -594,7 +600,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ApplicationBarPanel.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.ApplicationBarPanel" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ApplicationBarPanel</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.ApplicationBarPanel.ArrangeOverride(System.Windows.Size)">
       <summary>При переопределении в производном классе размещает дочерние элементы и определяет размер для класса, производного от <see cref="T:System.Windows.FrameworkElement" />.</summary>
@@ -632,7 +644,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.CommandButton.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.CommandButton" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.CommandButton</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.CommandButton.OnClick">
       <summary>Вызывает перенаправленное событие <see cref="E:System.Windows.Controls.Primitives.ButtonBase.Click" />.</summary>
@@ -647,7 +665,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.DropDownCommandButton.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.DropDownCommandButton" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.DropDownCommandButton</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="E:Elysium.Controls.DropDownCommandButton.DropDownClosed">
       <summary>
@@ -785,7 +809,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ProgressBar.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.ProgressBar" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ProgressBar</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.ProgressBar.OnAnimationsUpdating(System.Windows.RoutedEventArgs)">
       <summary>
@@ -820,7 +850,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ProgressRing.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.ProgressRing" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ProgressRing</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="P:Elysium.Controls.ProgressRing.Angle">
       <summary>
@@ -894,7 +930,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.Submenu.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.Submenu" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.Submenu</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.Submenu.OnCreateAutomationPeer">
       <summary>Возвращает определяющиеся классом <see cref="T:System.Windows.Automation.Peers.AutomationPeer" /> реализации для Windows Presentation Foundation (WPF) инфраструктуры.</summary>
@@ -906,7 +948,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ToggleCommandButton.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.ToggleCommandButton" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ToggleCommandButton</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="E:Elysium.Controls.ToggleCommandButton.Checked">
       <summary>
@@ -1003,7 +1051,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ToggleSwitch.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.ToggleSwitch" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ToggleSwitch</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="E:Elysium.Controls.ToggleSwitch.Checked">
       <summary>
@@ -1334,7 +1388,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.Window.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.Window" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.Window</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="P:Elysium.Controls.Window.ApplicationBar">
       <summary>
@@ -1345,6 +1405,39 @@
       <summary>
         Идентифицирует свойство зависимостей <see cref="P:Elysium.Controls.Window.ApplicationBar" />.
       </summary>
+    </member>
+    <member name="P:Elysium.Controls.Window.DefaultCaptionButtonStyleKey">
+      <summary>
+        Возвращает ключ ресурса для стиля, применяемого к кнопкам в заголовке окна по-умолчанию.
+      </summary>
+    </member>
+    <member name="M:Elysium.Controls.Window.Dispose">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDispose">
+            <parameter>Elysium.Controls.Window</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:Elysium.Controls.Window.Dispose(System.Boolean)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDisposeBool">
+            <parameter>Elysium.Controls.Window</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="disposing">
+        <markup>
+          <include item="SMCAutoDocDisposeParam">
+            <parameter>Elysium.Controls.Window</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:Elysium.Controls.Window.Finalize">
+      <summary>Позволяет объекту попытаться освободить ресурсы и выполнить другие операции очистки, перед тем как объект будет утилизирован в процессе сборки мусора.</summary>
     </member>
     <member name="M:Elysium.Controls.Window.GetApplicationBar(System.Windows.Window)">
       <summary>
@@ -1372,6 +1465,26 @@
       </summary>
       <param name="obj">Элемент управления, для которого считывается значение свойства.</param>
       <returns>Значение, указывающее является ли указанное окно главным.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Controls.Window.GetIsTitleBarHost(System.Windows.Controls.Decorator)">
+      <summary>
+        Возвращает значение свойства зависимостей <see cref="P:Elysium.Controls.Window.IsTitleBarHost" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого считывается значение свойства.</param>
+      <returns>Указывает, является ли указанный элемент управления объектом, на котором будет размещаться панель заголовка окна.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Controls.Window.GetTitleBar(Elysium.Controls.Window)">
+      <summary>
+        Возвращает значение свойства зависимостей <see cref="P:Elysium.Controls.Window.TitleBar" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого считывается значение свойства.</param>
+      <returns>Панель заголовка окна.</returns>
       <exception cref="T:System.ArgumentNullException">
         Параметер <paramref name="obj" /> имеет значение null.
       </exception>
@@ -1416,8 +1529,27 @@
         Идентифицирует свойство зависимостей <see cref="P:Elysium.Controls.Window.IsMainWindow" />.
       </summary>
     </member>
+    <member name="P:Elysium.Controls.Window.IsTitleBarHost">
+      <summary>
+        Возвращает или задаёт значение, указывающее, является ли указанный элемент управления объектом, на котором будет размещаться панель заголовка окна.
+      </summary>
+    </member>
+    <member name="F:Elysium.Controls.Window.IsTitleBarHostProperty">
+      <summary>
+        Идентифицирует свойство зависимостей <see cref="P:Elysium.Controls.Window.IsTitleBarHost" />.
+      </summary>
+    </member>
+    <member name="P:Elysium.Controls.Window.MainWindowCaptionButtonStyleKey">
+      <summary>
+        Возвращает ключ ресурса для стиля, применяемого к кнопкам в заголовке главного окна.
+      </summary>
+    </member>
     <member name="M:Elysium.Controls.Window.OnApplyTemplate">
       <summary>При переопределении в производном классе вызывается каждый раз, когда код приложения или внутренние процессы вызывают <see cref="M:System.Windows.FrameworkElement.ApplyTemplate" />.</summary>
+    </member>
+    <member name="M:Elysium.Controls.Window.OnClosed(System.EventArgs)">
+      <summary>Создает событие <see cref="E:System.Windows.Window.Closed" />.</summary>
+      <param name="e">Объект <see cref="T:System.EventArgs" />, содержащий данные события.</param>
     </member>
     <member name="M:Elysium.Controls.Window.OnHasDropShadowChanged(System.Boolean,System.Boolean)">
       <summary>
@@ -1496,10 +1628,40 @@
         Параметер <paramref name="obj" /> имеет значение null.
       </exception>
     </member>
+    <member name="M:Elysium.Controls.Window.SetIsTitleBarHost(System.Windows.Controls.Decorator,System.Boolean)">
+      <summary>
+        Задаёт значение свойства зависимостей <see cref="P:Elysium.Controls.Window.IsTitleBarHost" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого устанавливается значение свойства.</param>
+      <param name="value">Указывает, является ли указанный элемент управления объектом, на котором будет размещаться панель заголовка окна.</param>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Controls.Window.SetTitleBar(Elysium.Controls.Window,System.Windows.FrameworkElement)">
+      <summary>
+        Задаёт значение свойства зависимостей <see cref="P:Elysium.Controls.Window.TitleBar" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого устанавливается значение свойства.</param>
+      <param name="value">Панель заголовка окна.</param>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
     <member name="M:Elysium.Controls.Window.ShowDialog">
       <summary>Открывает окно и возвращается только после его закрытия.</summary>
       <returns>Значение <see cref="T:System.Nullable`1" /> типа <see cref="T:System.Boolean" />, определяющее было действие принято (true) или отменено (false). Возвращаемое значение представляет собой значение свойства <see cref="P:System.Windows.Window.DialogResult" /> перед закрытием окна.</returns>
       <exception cref="T:System.InvalidOperationException">Метод <see cref="M:System.Windows.Window.ShowDialog" /> вызывается в окне <see cref="T:System.Windows.Window" />, которое является видимым -или- Метод <see cref="M:System.Windows.Window.ShowDialog" /> вызывается в видимом окне <see cref="T:System.Windows.Window" />, открытом путем вызова метода <see cref="M:System.Windows.Window.ShowDialog" />.</exception>
+    </member>
+    <member name="P:Elysium.Controls.Window.TitleBar">
+      <summary>
+        Возвращает или задаёт панель заголовка данного окна.
+      </summary>
+    </member>
+    <member name="F:Elysium.Controls.Window.TitleBarProperty">
+      <summary>
+        Идентифицирует свойство зависимостей <see cref="P:Elysium.Controls.Window.TitleBar" />.
+      </summary>
     </member>
     <member name="T:Elysium.Controls.WindowCommands">
       <summary>
@@ -1856,7 +2018,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.Primitives.CommandButtonBase.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.Primitives.CommandButtonBase" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.Primitives.CommandButtonBase</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.Primitives.CommandButtonBase.ArrangeOverride(System.Windows.Size)">
       <summary>Вызывается, чтобы разместить и масштабировать содержимое объекта <see cref="T:System.Windows.Controls.Control" />.</summary>
@@ -1982,7 +2150,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.Primitives.ProgressBase.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Controls.Primitives.ProgressBase" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.Primitives.ProgressBase</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="E:Elysium.Controls.Primitives.ProgressBase.AnimationsUpdated">
       <summary>
@@ -2126,7 +2300,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.AngleToCoordinateConverter.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Converters.AngleToCoordinateConverter" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.AngleToCoordinateConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.AngleToCoordinateConverter.Convert(System.Object[],System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2152,7 +2332,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.DoubleToGridLengthConverter.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Converters.DoubleToGridLengthConverter" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.DoubleToGridLengthConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.DoubleToGridLengthConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2196,7 +2382,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.DoubleToThicknessConverter.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Converters.DoubleToThicknessConverter" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.DoubleToThicknessConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.DoubleToThicknessConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2235,7 +2427,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.GridLengthToDoubleConverter.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Converters.GridLengthToDoubleConverter" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.GridLengthToDoubleConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.GridLengthToDoubleConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2279,7 +2477,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.IsGreaterThanConverter.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Converters.IsGreaterThanConverter" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.IsGreaterThanConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.IsGreaterThanConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2302,7 +2506,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.NumberPositiveToNegativeConverter.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Converters.NumberPositiveToNegativeConverter" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.NumberPositiveToNegativeConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.NumberPositiveToNegativeConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2340,7 +2550,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.PercentToAngleConverter.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Converters.PercentToAngleConverter" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.PercentToAngleConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.PercentToAngleConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2378,7 +2594,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessConverter.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Converters.ThicknessConverter" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.ThicknessConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2401,7 +2623,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessPositiveToNegativeConverter.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Converters.ThicknessPositiveToNegativeConverter" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.ThicknessPositiveToNegativeConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessPositiveToNegativeConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2439,7 +2667,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessToDoubleConverter.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:Elysium.Converters.ThicknessToDoubleConverter" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.ThicknessToDoubleConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessToDoubleConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -4183,6 +4417,46 @@
         Представляет класс, управляющий основными настройками стилей элементов управления.
       </summary>
     </member>
+    <member name="P:Elysium.Parameters.Window.CloseButtonToolTip">
+      <summary>
+        Возвращает или задаёт всплывающую подсказку кнопки "Закрыть" элемента управления <see cref="T:Elysium.Controls.Window" />.
+      </summary>
+    </member>
+    <member name="F:Elysium.Parameters.Window.CloseButtonToolTipProperty">
+      <summary>
+        Идентифицирует свойство зависимостей <see cref="P:Elysium.Parameters.Window.CloseButtonToolTip" />.
+      </summary>
+    </member>
+    <member name="M:Elysium.Parameters.Window.GetCloseButtonToolTip(Elysium.Controls.Window)">
+      <summary>
+        Возвращает значение свойства зависимостей <see cref="P:Elysium.Parameters.Window.CloseButtonToolTip" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого считывается значение свойства.</param>
+      <returns>Всплывающая подсказка кнопки "Закрыть".</returns>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.GetMaximizeButtonToolTip(Elysium.Controls.Window)">
+      <summary>
+        Возвращает значение свойства зависимостей <see cref="P:Elysium.Parameters.Window.MaximizeButtonToolTip" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого считывается значение свойства.</param>
+      <returns>Всплывающая подсказка кнопки "Развернуть".</returns>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.GetMinimizeButtonToolTip(Elysium.Controls.Window)">
+      <summary>
+        Возвращает значение свойства зависимостей <see cref="P:Elysium.Parameters.Window.MinimizeButtonToolTip" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого считывается значение свойства.</param>
+      <returns>Всплывающая подсказка кнопки "Свернуть".</returns>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
     <member name="M:Elysium.Parameters.Window.GetResizeBorderThickness(Elysium.Controls.Window)">
       <summary>
         Возвращает значение свойства зависимостей <see cref="P:Elysium.Parameters.Window.ResizeBorderThickness" /> для указанного элемента управления.
@@ -4192,6 +4466,36 @@
       <exception cref="T:System.ArgumentNullException">
         Параметер <paramref name="obj" /> имеет значение null.
       </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.GetRestoreButtonToolTip(Elysium.Controls.Window)">
+      <summary>
+        Возвращает значение свойства зависимостей <see cref="P:Elysium.Parameters.Window.RestoreButtonToolTip" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого считывается значение свойства.</param>
+      <returns>Всплывающая подсказка кнопки "Восстановить".</returns>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
+    <member name="P:Elysium.Parameters.Window.MaximizeButtonToolTip">
+      <summary>
+        Возвращает или задаёт всплывающую подсказку кнопки "Развернуть" элемента управления <see cref="T:Elysium.Controls.Window" />.
+      </summary>
+    </member>
+    <member name="F:Elysium.Parameters.Window.MaximizeButtonToolTipProperty">
+      <summary>
+        Идентифицирует свойство зависимостей <see cref="P:Elysium.Parameters.Window.MaximizeButtonToolTip" />.
+      </summary>
+    </member>
+    <member name="P:Elysium.Parameters.Window.MinimizeButtonToolTip">
+      <summary>
+        Возвращает или задаёт всплывающую подсказку кнопки "Свернуть" элемента управления <see cref="T:Elysium.Controls.Window" />.
+      </summary>
+    </member>
+    <member name="F:Elysium.Parameters.Window.MinimizeButtonToolTipProperty">
+      <summary>
+        Идентифицирует свойство зависимостей <see cref="P:Elysium.Parameters.Window.MinimizeButtonToolTip" />.
+      </summary>
     </member>
     <member name="P:Elysium.Parameters.Window.ResizeBorderThickness">
       <summary>
@@ -4203,12 +4507,62 @@
         Идентифицирует свойство зависимостей <see cref="P:Elysium.Parameters.Window.ResizeBorderThickness" />.
       </summary>
     </member>
+    <member name="P:Elysium.Parameters.Window.RestoreButtonToolTip">
+      <summary>
+        Возвращает или задаёт всплывающую подсказку кнопки "Восстановить" элемента управления <see cref="T:Elysium.Controls.Window" />.
+      </summary>
+    </member>
+    <member name="F:Elysium.Parameters.Window.RestoreButtonToolTipProperty">
+      <summary>
+        Идентифицирует свойство зависимостей <see cref="P:Elysium.Parameters.Window.RestoreButtonToolTip" />.
+      </summary>
+    </member>
+    <member name="M:Elysium.Parameters.Window.SetCloseButtonToolTip(Elysium.Controls.Window,System.Object)">
+      <summary>
+        Задаёт значение свойства зависимостей <see cref="P:Elysium.Parameters.Window.CloseButtonToolTip" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого устанавливается значение свойства.</param>
+      <param name="value">Всплывающая подсказка кнопки "Закрыть".</param>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.SetMaximizeButtonToolTip(Elysium.Controls.Window,System.Object)">
+      <summary>
+        Задаёт значение свойства зависимостей <see cref="P:Elysium.Parameters.Window.MaximizeButtonToolTip" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого устанавливается значение свойства.</param>
+      <param name="value">Всплывающая подсказка кнопки "Развернуть".</param>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.SetMinimizeButtonToolTip(Elysium.Controls.Window,System.Object)">
+      <summary>
+        Задаёт значение свойства зависимостей <see cref="P:Elysium.Parameters.Window.MinimizeButtonToolTip" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого устанавливается значение свойства.</param>
+      <param name="value">Всплывающая подсказка кнопки "Свернуть".</param>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
     <member name="M:Elysium.Parameters.Window.SetResizeBorderThickness(Elysium.Controls.Window,System.Windows.Thickness)">
       <summary>
         Задаёт значение свойства зависимостей <see cref="P:Elysium.Parameters.Window.ResizeBorderThickness" /> для указанного элемента управления.
       </summary>
       <param name="obj">Элемент управления, для которого устанавливается значение свойства.</param>
       <param name="value">Толщина рамки изменения размера окна.</param>
+      <exception cref="T:System.ArgumentNullException">
+        Параметер <paramref name="obj" /> имеет значение null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.SetRestoreButtonToolTip(Elysium.Controls.Window,System.Object)">
+      <summary>
+        Задаёт значение свойства зависимостей <see cref="P:Elysium.Parameters.Window.RestoreButtonToolTip" /> для указанного элемента управления.
+      </summary>
+      <param name="obj">Элемент управления, для которого устанавливается значение свойства.</param>
+      <param name="value">Всплывающая подсказка кнопки "Восстановить".</param>
       <exception cref="T:System.ArgumentNullException">
         Параметер <paramref name="obj" /> имеет значение null.
       </exception>
@@ -4268,7 +4622,13 @@
       <typeparam name="TValue">Тип значений в словаре.</typeparam>
     </member>
     <member name="M:System.Collections.ObjectModel.ObservableDictionary`2.#ctor">
-      <summary>Инициализирует новый экземпляр класса <see cref="T:System.Collections.ObjectModel.ObservableDictionary`2" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>System.Collections.ObjectModel.ObservableDictionary`2</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:System.Collections.ObjectModel.ObservableDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
       <summary>Инициализирует новый экземпляр <see cref="T:System.Collections.Generic.Dictionary`2" />, который содержит элементы, скопированные из указанного словаря <see cref="T:System.Collections.Generic.IDictionary`2" />, и использует для данного типа ключа компаратор по умолчанию, проверяющий на равенство.</summary>
@@ -4406,7 +4766,13 @@
       <returns>Элемент в <see cref="T:System.Collections.Generic.Dictionary`2" /> находится в текущей позиции перечислителя.</returns>
     </member>
     <member name="M:System.Collections.ObjectModel.ObservableDictionary`2.Enumerator.Dispose">
-      <summary>Освобождает все ресурсы, используемые <see cref="T:System.Collections.ObjectModel.ObservableDictionary`2.Enumerator" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDispose">
+            <parameter>System.Collections.ObjectModel.ObservableDictionary`2.Enumerator</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:System.Collections.ObjectModel.ObservableDictionary`2.Enumerator.MoveNext">
       <summary>Перемещает перечислитель к следующему элементу <see cref="T:System.Collections.Generic.Dictionary`2" />.</summary>

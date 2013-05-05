@@ -370,7 +370,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ApplicationBar.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.ApplicationBar" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ApplicationBar</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.ApplicationBar.ArrangeOverride(System.Windows.Size)">
       <summary>Called to arrange and size the content of a <see cref="T:System.Windows.Controls.Control" /> object. </summary>
@@ -598,7 +604,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ApplicationBarPanel.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.ApplicationBarPanel" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ApplicationBarPanel</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.ApplicationBarPanel.ArrangeOverride(System.Windows.Size)">
       <summary>When overridden in a derived class, positions child elements and determines a size for a <see cref="T:System.Windows.FrameworkElement" /> derived class. </summary>
@@ -636,7 +648,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.CommandButton.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.CommandButton" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.CommandButton</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.CommandButton.OnClick">
       <summary>Raises the <see cref="E:System.Windows.Controls.Primitives.ButtonBase.Click" /> routed event. </summary>
@@ -651,7 +669,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.DropDownCommandButton.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.DropDownCommandButton" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.DropDownCommandButton</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="E:Elysium.Controls.DropDownCommandButton.DropDownClosed">
       <summary>
@@ -789,7 +813,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ProgressBar.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.ProgressBar" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ProgressBar</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.ProgressBar.OnAnimationsUpdating(System.Windows.RoutedEventArgs)">
       <summary>
@@ -824,7 +854,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ProgressRing.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.ProgressRing" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ProgressRing</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="P:Elysium.Controls.ProgressRing.Angle">
       <summary>
@@ -898,7 +934,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.Submenu.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.Submenu" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.Submenu</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.Submenu.OnCreateAutomationPeer">
       <summary>Returns class-specific <see cref="T:System.Windows.Automation.Peers.AutomationPeer" /> implementations for the Windows Presentation Foundation (WPF) infrastructure.</summary>
@@ -910,7 +952,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ToggleCommandButton.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.ToggleCommandButton" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ToggleCommandButton</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="E:Elysium.Controls.ToggleCommandButton.Checked">
       <summary>
@@ -1007,7 +1055,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.ToggleSwitch.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.ToggleSwitch" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.ToggleSwitch</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="E:Elysium.Controls.ToggleSwitch.Checked">
       <summary>
@@ -1338,7 +1392,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.Window.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.Window" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.Window</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="P:Elysium.Controls.Window.ApplicationBar">
       <summary>
@@ -1349,6 +1409,39 @@
       <summary>
         Identifies the <see cref="P:Elysium.Controls.Window.ApplicationBar" /> dependency property.
       </summary>
+    </member>
+    <member name="P:Elysium.Controls.Window.DefaultCaptionButtonStyleKey">
+      <summary>
+        Gets the resource key for a style applied to a buttons in a main window caption by default.
+      </summary>
+    </member>
+    <member name="M:Elysium.Controls.Window.Dispose">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDispose">
+            <parameter>Elysium.Controls.Window</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:Elysium.Controls.Window.Dispose(System.Boolean)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDisposeBool">
+            <parameter>Elysium.Controls.Window</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="disposing">
+        <markup>
+          <include item="SMCAutoDocDisposeParam">
+            <parameter>Elysium.Controls.Window</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:Elysium.Controls.Window.Finalize">
+      <summary>Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.</summary>
     </member>
     <member name="M:Elysium.Controls.Window.GetApplicationBar(System.Windows.Window)">
       <summary>
@@ -1376,6 +1469,26 @@
       </summary>
       <param name="obj">The  control, for which the value of the property is being got.</param>
       <returns>A value, which corresponds to whether the specified window is main.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Controls.Window.GetIsTitleBarHost(System.Windows.Controls.Decorator)">
+      <summary>
+        Returns the value of the <see cref="P:Elysium.Controls.Window.IsTitleBarHost" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being got.</param>
+      <returns>Corresponds to whether the specified control is a host-object for the title bar.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Controls.Window.GetTitleBar(Elysium.Controls.Window)">
+      <summary>
+        Returns the value of the <see cref="P:Elysium.Controls.Window.TitleBar" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The control, for which the value of the property is being got.</param>
+      <returns>An title bar for the window.</returns>
       <exception cref="T:System.ArgumentNullException">
         The parameter <paramref name="obj" /> has a value null.
       </exception>
@@ -1420,8 +1533,27 @@
         Identifies the <see cref="P:Elysium.Controls.Window.IsMainWindow" /> dependency property.
       </summary>
     </member>
+    <member name="P:Elysium.Controls.Window.IsTitleBarHost">
+      <summary>
+        Gets or sets the value, which corresponds to whether the specified control is a host-object for the title bar.
+      </summary>
+    </member>
+    <member name="F:Elysium.Controls.Window.IsTitleBarHostProperty">
+      <summary>
+        Identifies the <see cref="P:Elysium.Controls.Window.IsTitleBarHost" /> dependency property.
+      </summary>
+    </member>
+    <member name="P:Elysium.Controls.Window.MainWindowCaptionButtonStyleKey">
+      <summary>
+        Gets the resource key for a style applied to a buttons in the main window caption.
+      </summary>
+    </member>
     <member name="M:Elysium.Controls.Window.OnApplyTemplate">
       <summary>When overridden in a derived class, is invoked whenever application code or internal processes call <see cref="M:System.Windows.FrameworkElement.ApplyTemplate" />.</summary>
+    </member>
+    <member name="M:Elysium.Controls.Window.OnClosed(System.EventArgs)">
+      <summary>Raises the <see cref="E:System.Windows.Window.Closed" /> event.</summary>
+      <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
     </member>
     <member name="M:Elysium.Controls.Window.OnHasDropShadowChanged(System.Boolean,System.Boolean)">
       <summary>
@@ -1500,11 +1632,41 @@
         The parameter <paramref name="obj" /> has a value null.
       </exception>
     </member>
+    <member name="M:Elysium.Controls.Window.SetIsTitleBarHost(System.Windows.Controls.Decorator,System.Boolean)">
+      <summary>
+        Sets the value of the <see cref="P:Elysium.Controls.Window.IsTitleBarHost" /> dependency property for the specified item of the control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being set.</param>
+      <param name="value">Corresponds to whether the specified control is a host-object for the title bar.</param>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Controls.Window.SetTitleBar(Elysium.Controls.Window,System.Windows.FrameworkElement)">
+      <summary>
+        Sets the value of the <see cref="P:Elysium.Controls.Window.TitleBar" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being set.</param>
+      <param name="value">An title bar for the window.</param>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
     <member name="M:Elysium.Controls.Window.ShowDialog">
       <summary>Opens a window and returns only when the newly opened window is closed.</summary>
       <returns>A <see cref="T:System.Nullable`1" /> value of type <see cref="T:System.Boolean" /> that specifies whether the activity was accepted (true) or canceled (false). The return value is the value of the <see cref="P:System.Windows.Window.DialogResult" /> property before a window closes.</returns>
       <exception cref="T:System.InvalidOperationException">
         <see cref="M:System.Windows.Window.ShowDialog" /> is called on a <see cref="T:System.Windows.Window" /> that is visible-or-<see cref="M:System.Windows.Window.ShowDialog" /> is called on a visible <see cref="T:System.Windows.Window" /> that was opened by calling <see cref="M:System.Windows.Window.ShowDialog" />.</exception>
+    </member>
+    <member name="P:Elysium.Controls.Window.TitleBar">
+      <summary>
+        Gets or sets a title bar for the window.
+      </summary>
+    </member>
+    <member name="F:Elysium.Controls.Window.TitleBarProperty">
+      <summary>
+        Identifies the <see cref="P:Elysium.Controls.Window.TitleBar" /> dependency property.
+      </summary>
     </member>
     <member name="T:Elysium.Controls.WindowCommands">
       <summary>
@@ -1867,7 +2029,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.Primitives.CommandButtonBase.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.Primitives.CommandButtonBase" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.Primitives.CommandButtonBase</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Controls.Primitives.CommandButtonBase.ArrangeOverride(System.Windows.Size)">
       <summary>Called to arrange and size the content of a <see cref="T:System.Windows.Controls.Control" /> object. </summary>
@@ -1993,7 +2161,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Controls.Primitives.ProgressBase.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Controls.Primitives.ProgressBase" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Controls.Primitives.ProgressBase</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="E:Elysium.Controls.Primitives.ProgressBase.AnimationsUpdated">
       <summary>
@@ -2137,7 +2311,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.AngleToCoordinateConverter.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Converters.AngleToCoordinateConverter" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.AngleToCoordinateConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.AngleToCoordinateConverter.Convert(System.Object[],System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2165,7 +2345,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.DoubleToGridLengthConverter.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Converters.DoubleToGridLengthConverter" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.DoubleToGridLengthConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.DoubleToGridLengthConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2209,7 +2395,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.DoubleToThicknessConverter.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Converters.DoubleToThicknessConverter" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.DoubleToThicknessConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.DoubleToThicknessConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2248,7 +2440,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.GridLengthToDoubleConverter.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Converters.GridLengthToDoubleConverter" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.GridLengthToDoubleConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.GridLengthToDoubleConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2292,7 +2490,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.IsGreaterThanConverter.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Converters.IsGreaterThanConverter" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.IsGreaterThanConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.IsGreaterThanConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2316,7 +2520,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.NumberPositiveToNegativeConverter.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Converters.NumberPositiveToNegativeConverter" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.NumberPositiveToNegativeConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.NumberPositiveToNegativeConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2354,7 +2564,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.PercentToAngleConverter.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Converters.PercentToAngleConverter" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.PercentToAngleConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.PercentToAngleConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2392,7 +2608,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessConverter.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Converters.ThicknessConverter" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.ThicknessConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2415,7 +2637,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessPositiveToNegativeConverter.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Converters.ThicknessPositiveToNegativeConverter" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.ThicknessPositiveToNegativeConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessPositiveToNegativeConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -2453,7 +2681,13 @@
       </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessToDoubleConverter.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Elysium.Converters.ThicknessToDoubleConverter" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>Elysium.Converters.ThicknessToDoubleConverter</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:Elysium.Converters.ThicknessToDoubleConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
       <summary>
@@ -4183,6 +4417,46 @@
         Represents a class that manages general settings of the styles of the controls.
       </summary>
     </member>
+    <member name="P:Elysium.Parameters.Window.CloseButtonToolTip">
+      <summary>
+        Gets or sets tooltip for Close button of <see cref="T:System.Windows.Window" />.
+      </summary>
+    </member>
+    <member name="F:Elysium.Parameters.Window.CloseButtonToolTipProperty">
+      <summary>
+        Identifies the <see cref="P:Elysium.Parameters.Window.CloseButtonToolTip" /> dependency property.
+      </summary>
+    </member>
+    <member name="M:Elysium.Parameters.Window.GetCloseButtonToolTip(Elysium.Controls.Window)">
+      <summary>
+        Returns the value of the <see cref="P:Elysium.Parameters.Window.CloseButtonToolTip" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being got.</param>
+      <returns>Close button tooltip.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.GetMaximizeButtonToolTip(Elysium.Controls.Window)">
+      <summary>
+        Returns the value of the <see cref="P:Elysium.Parameters.Window.MaximizeButtonToolTip" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being got.</param>
+      <returns>Maximize button tooltip.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.GetMinimizeButtonToolTip(Elysium.Controls.Window)">
+      <summary>
+        Returns the value of the <see cref="P:Elysium.Parameters.Window.MinimizeButtonToolTip" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being got.</param>
+      <returns>Minimize button tooltip.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
     <member name="M:Elysium.Parameters.Window.GetResizeBorderThickness(Elysium.Controls.Window)">
       <summary>
         Returns the value of the <see cref="P:Elysium.Parameters.Window.ResizeBorderThickness" /> dependency property for the specified control.
@@ -4192,6 +4466,36 @@
       <exception cref="T:System.ArgumentNullException">
         The parameter <paramref name="obj" /> has a value null.
       </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.GetRestoreButtonToolTip(Elysium.Controls.Window)">
+      <summary>
+        Returns the value of the <see cref="P:Elysium.Parameters.Window.RestoreButtonToolTip" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being got.</param>
+      <returns>Restore button tooltip.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
+    <member name="P:Elysium.Parameters.Window.MaximizeButtonToolTip">
+      <summary>
+        Gets or sets tooltip for Maximize button of <see cref="T:System.Windows.Window" />.
+      </summary>
+    </member>
+    <member name="F:Elysium.Parameters.Window.MaximizeButtonToolTipProperty">
+      <summary>
+        Identifies the <see cref="P:Elysium.Parameters.Window.MaximizeButtonToolTip" /> dependency property.
+      </summary>
+    </member>
+    <member name="P:Elysium.Parameters.Window.MinimizeButtonToolTip">
+      <summary>
+        Gets or sets tooltip for Minimize button of <see cref="T:System.Windows.Window" />.
+      </summary>
+    </member>
+    <member name="F:Elysium.Parameters.Window.MinimizeButtonToolTipProperty">
+      <summary>
+        Identifies the <see cref="P:Elysium.Parameters.Window.MinimizeButtonToolTip" /> dependency property.
+      </summary>
     </member>
     <member name="P:Elysium.Parameters.Window.ResizeBorderThickness">
       <summary>
@@ -4203,12 +4507,62 @@
         Identifies the <see cref="P:Elysium.Parameters.Window.ResizeBorderThickness" /> dependency property.
       </summary>
     </member>
+    <member name="P:Elysium.Parameters.Window.RestoreButtonToolTip">
+      <summary>
+        Gets or sets tooltip for Restore button of <see cref="T:System.Windows.Window" />.
+      </summary>
+    </member>
+    <member name="F:Elysium.Parameters.Window.RestoreButtonToolTipProperty">
+      <summary>
+        Identifies the <see cref="P:Elysium.Parameters.Window.RestoreButtonToolTip" /> dependency property.
+      </summary>
+    </member>
+    <member name="M:Elysium.Parameters.Window.SetCloseButtonToolTip(Elysium.Controls.Window,System.Object)">
+      <summary>
+        Sets the value of the <see cref="P:Elysium.Parameters.Window.CloseButtonToolTip" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being set.</param>
+      <param name="value">Close button tooltip.</param>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.SetMaximizeButtonToolTip(Elysium.Controls.Window,System.Object)">
+      <summary>
+        Sets the value of the <see cref="P:Elysium.Parameters.Window.MaximizeButtonToolTip" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being set.</param>
+      <param name="value">Maximize button tooltip.</param>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.SetMinimizeButtonToolTip(Elysium.Controls.Window,System.Object)">
+      <summary>
+        Sets the value of the <see cref="P:Elysium.Parameters.Window.MinimizeButtonToolTip" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being set.</param>
+      <param name="value">Minimize button tooltip.</param>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
     <member name="M:Elysium.Parameters.Window.SetResizeBorderThickness(Elysium.Controls.Window,System.Windows.Thickness)">
       <summary>
         Sets the value of the <see cref="P:Elysium.Parameters.Window.ResizeBorderThickness" /> dependency property for the specified control.
       </summary>
       <param name="obj">The  control, for which the value of the property is being set.</param>
       <param name="value">Thickness of the border, which is drawn during resizing.</param>
+      <exception cref="T:System.ArgumentNullException">
+        The parameter <paramref name="obj" /> has a value null.
+      </exception>
+    </member>
+    <member name="M:Elysium.Parameters.Window.SetRestoreButtonToolTip(Elysium.Controls.Window,System.Object)">
+      <summary>
+        Sets the value of the <see cref="P:Elysium.Parameters.Window.RestoreButtonToolTip" /> dependency property for the specified control.
+      </summary>
+      <param name="obj">The  control, for which the value of the property is being set.</param>
+      <param name="value">Restore button tooltip.</param>
       <exception cref="T:System.ArgumentNullException">
         The parameter <paramref name="obj" /> has a value null.
       </exception>
@@ -4273,7 +4627,13 @@
       <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
     </member>
     <member name="M:System.Collections.ObjectModel.ObservableDictionary`2.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:System.Collections.ObjectModel.ObservableDictionary`2" /> class</summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>System.Collections.ObjectModel.ObservableDictionary`2</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:System.Collections.ObjectModel.ObservableDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
       <summary>Initializes a new instance of the <see cref="T:System.Collections.Generic.Dictionary`2" /> class that contains elements copied from the specified <see cref="T:System.Collections.Generic.IDictionary`2" /> and uses the default equality comparer for the key type.</summary>
@@ -4421,7 +4781,13 @@
       <returns>The element in the <see cref="T:System.Collections.Generic.Dictionary`2" /> at the current position of the enumerator.</returns>
     </member>
     <member name="M:System.Collections.ObjectModel.ObservableDictionary`2.Enumerator.Dispose">
-      <summary>Releases all resources used by the <see cref="T:System.Collections.ObjectModel.ObservableDictionary`2.Enumerator" /></summary>
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDispose">
+            <parameter>System.Collections.ObjectModel.ObservableDictionary`2.Enumerator</parameter>
+          </include>
+        </markup>
+      </summary>
     </member>
     <member name="M:System.Collections.ObjectModel.ObservableDictionary`2.Enumerator.MoveNext">
       <summary>Advances the enumerator to the next element of the <see cref="T:System.Collections.Generic.Dictionary`2" />.</summary>

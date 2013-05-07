@@ -202,6 +202,10 @@ namespace WpfMpdClient
                 Tracks.Visible = value;
                 Primary.Visible = !value;
             }
+            get
+            {
+                return Primary.Show == Visibility.Collapsed;
+            }
         }
     }
 
@@ -317,6 +321,7 @@ namespace WpfMpdClient
       m_ArtDownloader.Start();      
       txtStatus.Text = "Not connected";
       context.View = false;
+      lstArtist.Focus();
     }
 
     public int CurrentTrackId
@@ -1887,6 +1892,37 @@ namespace WpfMpdClient
             ) { Verb = "Open" });
         }
         catch { }
+    }
+
+    private void lstAlbums_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == Key.Enter)
+      {
+        /*var element = sender as UIElement;
+        element.RaiseEvent(new KeyEventArgs(
+          Keyboard.PrimaryDevice,
+          PresentationSource.FromDependencyObject(element),
+          0,
+          Key.Enter) { RoutedEvent = Keyboard.KeyDownEvent }
+        );*/
+        if (Keyboard.Modifiers == ModifierKeys.Shift)
+          ContextMenu_Click(new MenuItem() { Name = "mnuAdd" }, null);
+        else if (Keyboard.Modifiers == ModifierKeys.Control)
+          ContextMenu_Click(new MenuItem() { Name = "mnuAddPlay" }, null);
+        else if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+          ContextMenu_Click(new MenuItem() { Name = "mnuAddReplacePlay" }, null);
+        else
+          context.View ^= true;
+        e.Handled = true;
+      }
+    }
+
+    private void lstArtist_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == Key.Enter)
+      {
+        lstAlbums.Focus();
+      }
     }
   }
 }

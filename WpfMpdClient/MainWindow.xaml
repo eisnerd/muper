@@ -644,6 +644,7 @@
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <EventSetter Event="KeyDown" Handler="lstPlaylist_KeyDown" />
                                 <EventSetter Event="MouseDoubleClick" Handler="lstPlaylist_MouseDoubleClick" />
                                 <EventSetter Event="PreviewMouseRightButtonDown" Handler="lstPlaylist_MouseRightButtonDown" />
                                 <EventSetter Event="Selected" Handler="lstPlaylist_Selected" />

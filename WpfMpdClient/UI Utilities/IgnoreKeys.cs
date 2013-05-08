@@ -30,19 +30,24 @@ namespace UI
           if (key != Key.None && e.Key == key &&
               (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
           {
-            var parent = LogicalTreeHelper.GetParent(depObj) as UIElement;
-            if (parent != null)
-            {
-              parent.RaiseEvent(new KeyEventArgs(
-                  Keyboard.PrimaryDevice,
-                  PresentationSource.FromDependencyObject(parent),
-                  0,
-                  key) { RoutedEvent = Keyboard.KeyDownEvent }
-              );
-              e.Handled = true;
-            }
+            (LogicalTreeHelper
+              .GetParent(depObj) as UIElement)
+              .SendKey(key);
+            e.Handled = true;
           }
         };
+    }
+
+    public static void SendKey(this UIElement element, Key key)
+    {
+      if (element != null)
+        element.RaiseEvent(new KeyEventArgs(
+          Keyboard.PrimaryDevice,
+          PresentationSource.FromDependencyObject(element),
+          0,
+          key
+          ) { RoutedEvent = Keyboard.KeyDownEvent }
+         );
     }
   }
 }

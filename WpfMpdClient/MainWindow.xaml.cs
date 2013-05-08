@@ -37,6 +37,7 @@ using CsUpdater;
 using System.Reflection;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using UI;
 
 namespace WpfMpdClient
 {
@@ -1240,7 +1241,14 @@ namespace WpfMpdClient
 
     private void lstPlaylist_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
+      (sender as UIElement).SendKey(Key.Enter);
+    }
+
+    private void lstPlaylist_KeyDown(object sender, KeyEventArgs e)
+    {
       if (m_Mpc == null || !m_Mpc.Connected)
+        return;
+      if (e.Key != Key.Enter && e.Key != Key.Delete)
         return;
 
       ListBoxItem item = sender as ListBoxItem;
@@ -1248,7 +1256,13 @@ namespace WpfMpdClient
         MpdFile file = item.DataContext as MpdFile;
         if (file != null) {
           try{
-            m_Mpc.Play(file.Pos);
+            if (e.Key == Key.Delete) {
+              if (lstPlaylistStyled.IsAncestorOf(item) && lstPlaylistStyled.SelectedItems.Count > 1)
+                lstPlaylistStyled.SelectedItems.OfType<MpdFile>().Try(f => m_Mpc.DeleteId(f.Id));
+              else
+                m_Mpc.DeleteId(file.Id);
+            } else
+              m_Mpc.Play(file.Pos);
           }catch (Exception ex){
             ShowException(ex);
             return;
@@ -1991,8 +2005,18 @@ namespace WpfMpdClient
 
     private void TabBackwards(object sender, KeyEventArgs e)
     {
-      if (e.Key == Key.Tab && Keyboard.Modifiers == ModifierKeys.None && !(sender == lstAlbums && context.View))
+      if (e.Key == Key.Tab)
       {
+        if (sender == lstAlbums && context.View)
+        {
+          if (Keyboard.Modifiers == ModifierKeys.Shift)
+            context.View = false;
+          else
+            return;
+        }
+        else if (Keyboard.Modifiers != ModifierKeys.None)
+          return;
+
         var element = sender as UIElement;
         if (element != null)
         {

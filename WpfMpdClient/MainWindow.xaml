@@ -165,7 +165,7 @@
                                             <TextBlock VerticalAlignment="Center" TextBlock.FontWeight="Bold" Text="{Binding Path=Artist}" />
                                         </StackPanel>
                                     </Border>
-                                    <local:SearchableListBox Margin="2" Grid.Row="3" SelectionMode="Single" x:Name="lstAlbums" SelectionChanged="lstAlbums_SelectionChanged" PreviewMouseLeftButtonDown="lstAlbums_PreviewMouseLeftButtonDown" KeyDown="lstAlbums_KeyDown">
+                                    <local:SearchableListBox Margin="2" Grid.Row="3" SelectionMode="Single" x:Name="lstAlbums" SelectionChanged="lstAlbums_SelectionChanged" PreviewMouseLeftButtonDown="lstAlbums_PreviewMouseLeftButtonDown" KeyDown="lstAlbums_KeyDown" PreviewKeyDown="TabBackwards">
                                         <local:SearchableListBox.Resources>
                                             <DataTemplate x:Key="DefaultItemTemplate">
                                                 <StackPanel Orientation="Horizontal" Loaded="LisboxItem_Loaded">
@@ -449,7 +449,7 @@
                            Visibility="{Binding Tracks.Hide}"><![CDATA[<]]></Label>
                     <DockPanel LastChildFill="True" Grid.Column="1" Visibility="{Binding Tracks.Show}">
                     <Border Margin="2 0" BorderThickness="0 0 0 2" BorderBrush="LightGray" DockPanel.Dock="Bottom" />
-                    <ItemsControl Margin="2" x:Name="lstInfo" DockPanel.Dock="Bottom">
+                    <ItemsControl Margin="2" x:Name="lstInfo" DockPanel.Dock="Bottom" IsTabStop="False">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}" />
@@ -461,7 +461,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <ListView Margin="2" x:Name="lstTracks" SelectionMode="Extended" SelectionChanged="lstTracks_SelectionChanged" MouseDoubleClick="lstTracks_MouseDoubleClick">
+                    <ListView Margin="2" x:Name="lstTracks" SelectionMode="Extended" SelectionChanged="lstTracks_SelectionChanged" MouseDoubleClick="lstTracks_MouseDoubleClick" KeyDown="lstTracks_KeyDown" PreviewKeyDown="TabBackwards">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Style.Triggers>

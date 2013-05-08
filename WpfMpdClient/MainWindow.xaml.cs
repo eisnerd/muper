@@ -1894,17 +1894,24 @@ namespace WpfMpdClient
         catch { }
     }
 
+    private void lstTracks_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == Key.Enter)
+      {
+        if (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.None)
+          ContextMenu_Click(new MenuItem() { Name = "mnuAdd" }, null);
+        else if (Keyboard.Modifiers == ModifierKeys.Control)
+          ContextMenu_Click(new MenuItem() { Name = "mnuAddPlay" }, null);
+        else if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+          ContextMenu_Click(new MenuItem() { Name = "mnuAddReplacePlay" }, null);
+        e.Handled = true;
+      }
+    }
+
     private void lstAlbums_KeyDown(object sender, KeyEventArgs e)
     {
       if (e.Key == Key.Enter)
       {
-        /*var element = sender as UIElement;
-        element.RaiseEvent(new KeyEventArgs(
-          Keyboard.PrimaryDevice,
-          PresentationSource.FromDependencyObject(element),
-          0,
-          Key.Enter) { RoutedEvent = Keyboard.KeyDownEvent }
-        );*/
         if (Keyboard.Modifiers == ModifierKeys.Shift)
           ContextMenu_Click(new MenuItem() { Name = "mnuAdd" }, null);
         else if (Keyboard.Modifiers == ModifierKeys.Control)
@@ -1922,6 +1929,19 @@ namespace WpfMpdClient
       if (e.Key == Key.Enter)
       {
         lstAlbums.Focus();
+      }
+    }
+
+    private void TabBackwards(object sender, KeyEventArgs e)
+    {
+      if (e.Key == Key.Tab && Keyboard.Modifiers == ModifierKeys.None && !(sender == lstAlbums && context.View))
+      {
+        var element = sender as UIElement;
+        if (element != null)
+        {
+          element.MoveFocus(new TraversalRequest(FocusNavigationDirection.Previous));
+          e.Handled = true;
+        }
       }
     }
   }

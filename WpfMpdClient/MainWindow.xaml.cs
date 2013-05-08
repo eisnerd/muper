@@ -640,9 +640,36 @@ namespace WpfMpdClient
       }
     }
 
+    class Cancel
+    {
+      public bool cancel;
+      public static void Set(ICollection<Cancel> C, Cancel c)
+      {
+#if CancelConcurrent
+        while(true)
+          try
+          {
+            C.Do(_ => _.cancel = true);
+            break;
+          }
+          catch
+          {
+            System.Threading.Thread.Sleep(10);
+          }
+#else
+        lock(C) {
+          C.Do(_ => _.cancel = true);
+          C.Add(c);
+        }
+#endif
+      }
+    }
+
     static readonly System.Text.RegularExpressions.Regex recording = new System.Text.RegularExpressions.Regex(@"^(.+?)(?i: music| works?| pieces?)?(?:, +[IVXivx\d/:-]*[IVXivx/:-][IVXivxa\d/:-]*\b|,? *\b(?:[Vv]ol\.?|No\.?|[Oo]p(?:\.|us)?|Book|BB|Sz\.?) +[IVXivxa\d/:-]+(.*?))*(?:,? +[(]([^()]+)[)])*$", System.Text.RegularExpressions.RegexOptions.Compiled);
     static readonly System.Text.RegularExpressions.Regex punct = new System.Text.RegularExpressions.Regex(@"(?:\W*[(][^()]+[)])*\W+");
     static readonly System.Text.RegularExpressions.Regex numbers = new System.Text.RegularExpressions.Regex(@"\b(?:(0|zero|zero)|(1|one|un)|(2|two|deux)|(3|three|trois)|(4|four|quatre)|(5|five|cinq)|(6|six|six)|(7|seven|sept)|(8|eight|huit)|(9|nine|neuf)|(10|ten|dix)|(11|eleven|onze)|(12|twelve|douze)|(13|thirteen|treize)|(14|fourteen|quatorze)|(15|fifteen|quinze)|(16|sixteen|seize)|(17|seventeen|dix-sept)|(18|eighteen|dix-huit)|(19|nineteen|dix-neuf)|(?:(20|twenty|vingt)|(30|thirty|trente)|(40|fourty|quarante)|(50|fifty|cinquante)|(60|sixty|soixante)|(70|seventy|soixante-dix)|(80|eighty|quatre-vingts)|(90|ninety|quatre-vingt-dix))(?: (?:(0|zero|zero)|(1|one|(?:et )?un)|(2|two|deux)|(3|three|trois)|(4|four|quatre)|(5|five|cinq)|(6|six|six)|(7|seven|sept)|(8|eight|huit)|(9|nine|neuf)|(10|ten|dix)|(11|eleven|onze)))?|(\d+))\b".Replace(" ", @"\W+"), System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    LinkedList<Cancel> lstArtist_Jobs = new LinkedList<Cancel>();
     private void lstArtist_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       if (m_Mpc == null || !m_Mpc.Connected)
@@ -660,14 +687,19 @@ namespace WpfMpdClient
           lstAlbums_Show(a.Albums);
         else {
         string artist = a.Artist();
-       Action<Action<Action>> populate = call => {
+       Action<Cancel, Action<Action>> populate = (c, call) => {
+       try {
         IEnumerable<string> albums = null;
+        if (c.cancel)
+          return;
         try{
           albums = m_Mpc.List(ScopeSpecifier.Album, ScopeSpecifier.Artist, artist);
         }catch (Exception ex){
           ShowException(ex);
           return;
         }
+        if (c.cancel)
+          return;
         ListboxEntry last = null;
         if (a.Artist == "Misc")
           albums = albums.Where(_album => _album != "Misc");
@@ -702,12 +734,19 @@ namespace WpfMpdClient
           last = entry;
           return entry;
         }).ToList();
+        if (c.cancel)
+          return;
         call(() => lstAlbums_Show(a.Albums));
-       };
+       } finally {
+        lock(lstArtist_Jobs)
+          lstArtist_Jobs.Remove(c);
+       }};
+       var cancel = new Cancel();
+       Cancel.Set(lstArtist_Jobs, cancel);
        if (navigating)
-         populate(x => x());
+         populate(cancel, x => x());
        else
-         populate.BeginInvoke((Action<Action>)(x => Dispatcher.BeginInvoke(x)), populate.EndInvoke, null);
+         populate.BeginInvoke(cancel, (Action<Action>)(x => Dispatcher.BeginInvoke(x)), populate.EndInvoke, null);
 
         m_ArtistArtDownloader.Soon(a);
       }
@@ -804,6 +843,8 @@ namespace WpfMpdClient
     static readonly System.Collections.Concurrent.ConcurrentDictionary<string, ListboxEntry> Albums = new System.Collections.Concurrent.ConcurrentDictionary<string, ListboxEntry>();
 
     static readonly System.Text.RegularExpressions.Regex dir = new System.Text.RegularExpressions.Regex(@"^(.*)/(?:\\/|[^/]*)$");
+
+    LinkedList<Cancel> lstAlbums_Jobs = new LinkedList<Cancel>();
     private void lstAlbums_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       if (m_Mpc == null || !m_Mpc.Connected)
@@ -829,7 +870,10 @@ namespace WpfMpdClient
         var album = listBox.Selected();
         search[ScopeSpecifier.Album] = album.Album();
 
-       Action<Action<Action>> populate = call => {
+       Action<Cancel, Action<Action>> populate = (c, call) => {
+       try {
+        if (c.cancel)
+          return;
         if (album != null) {
           album.Related.Do(r => r.Selected = true);
           
@@ -839,6 +883,8 @@ namespace WpfMpdClient
               old.Related.Do(r => r.Selected = false);
           }
 
+          if (c.cancel)
+            return;
           call(() => {
               listBox.ScrollIntoView(album);
           });
@@ -846,6 +892,8 @@ namespace WpfMpdClient
 
         try {
           m_Tracks = m_Mpc.Find(search);
+          if (c.cancel)
+            return;
           if (album != null) {
             Albums[album.Artist + ":" + album.Album] = album;
             album.Tracks = () => m_Tracks;
@@ -869,6 +917,8 @@ namespace WpfMpdClient
                 .Where(m => (m.Supplement = !selection.Remove(m.File)) || true)
             ))
             .ToList();
+          if (c.cancel)
+            return;
           all.GroupBy(m => m.Artist).Do(a =>
             a.GroupBy(m => m.Album).Do(b => {
             var i = new ListboxEntry() {
@@ -881,6 +931,8 @@ namespace WpfMpdClient
             m_ArtDownloader.Soon(i);
           }));
           all.AddRange(selection.Values);
+          if (c.cancel)
+            return;
           call(() => {
             if (album != null)
               lstInfo.ItemsSource = album.Info;
@@ -893,11 +945,16 @@ namespace WpfMpdClient
             ShowException(ex);
             return;
         }
-       };
+       } finally {
+        lock(lstArtist_Jobs)
+          lstArtist_Jobs.Remove(c);
+       }};
+       var cancel = new Cancel();
+       Cancel.Set(lstArtist_Jobs, cancel);
        if (navigating)
-         populate(x => x());
+         populate(cancel, x => x());
        else
-         populate.BeginInvoke((Action<Action>)(x => Dispatcher.BeginInvoke(x)), populate.EndInvoke, null);
+         populate.BeginInvoke(cancel, (Action<Action>)(x => Dispatcher.BeginInvoke(x)), populate.EndInvoke, null);
       }
       else
       {

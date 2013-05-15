@@ -2025,5 +2025,10 @@ namespace WpfMpdClient
         }
       }
     }
+
+    private void txtStatus_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      Connect();
+    }
   }
 }

@@ -1040,6 +1040,6 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <TextBlock Grid.Row="1" Name="txtStatus" Margin="5" />
+        <TextBlock Grid.Row="1" Name="txtStatus" Margin="5" MouseLeftButtonDown="txtStatus_MouseLeftButtonDown" />
     </Grid>
 </metro:Window>

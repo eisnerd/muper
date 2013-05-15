@@ -284,7 +284,7 @@ namespace WpfMpdClient
 
     private Settings m_Settings;
     static readonly string[] filenames = new string[] { "cover", "folder", "album" };
-    static readonly string[] exts = new string[] { "jpg", "png", "gif" };
+    static readonly string[] exts = new string[] { "gif", "jpg", "png" };
 
     public static bool TryGet(Uri uri)
     {

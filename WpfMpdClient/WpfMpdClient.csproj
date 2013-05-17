@@ -131,6 +131,7 @@
     <Compile Include="Scrobbler.cs" />
     <Compile Include="SearchableListBox.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="UI Utilities\ObservableSortedList.cs" />
     <Compile Include="UpdateConfirmWindow.xaml.cs">
       <DependentUpon>UpdateConfirmWindow.xaml</DependentUpon>
     </Compile>

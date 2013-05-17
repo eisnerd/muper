@@ -275,6 +275,7 @@ namespace WpfMpdClient
 
       DataContext = context = new Context(m_Mpc);
       context.Playlist = new ObservableCollection<MpdFile>();
+      playerControl.Outputs = Outputs;
 
       cmbSearch.SelectedIndex = 0;
 
@@ -334,6 +335,37 @@ namespace WpfMpdClient
     public static readonly DependencyProperty CurrentTrackIdProperty = DependencyProperty.Register(
         "CurrentTrackId", typeof(int), typeof(MainWindow), new PropertyMetadata(0, null));
 
+    public class Output : IComparable, System.ComponentModel.INotifyPropertyChanged
+    {
+      public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+      protected void OnPropertyChanged(string name)
+      {
+        System.ComponentModel.PropertyChangedEventHandler handler = PropertyChanged;
+        if (handler != null)
+        {
+          handler(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+        }
+      }
+
+      public string Name { get; set; }
+      public int Id { get; set; }
+      public Mpc Mpc { get; set; }
+
+      bool _Enabled;
+      public bool Enabled
+      {
+        get { return _Enabled; }
+        set { if (value) Mpc.EnableOutput(Id); else Mpc.DisableOutput(Id); }
+      }
+      public bool IsEnabled { set { _Enabled = value; OnPropertyChanged("Enabled"); } }
+
+      public int CompareTo(object obj)
+      {
+        return Name.CompareTo(((Output)obj).Name);
+      }
+    }
+    ObservableSortedList<Output> Outputs = new ObservableSortedList<Output>();
+
     private void MpcIdleConnected(Mpc connection)
     {
       if (!string.IsNullOrEmpty(m_Settings.Password)){
@@ -344,7 +376,7 @@ namespace WpfMpdClient
       MpcIdleSubsystemsChanged(m_MpcIdle, Mpc.Subsystems.All);
 
       Mpc.Subsystems subsystems = Mpc.Subsystems.player | Mpc.Subsystems.playlist | Mpc.Subsystems.stored_playlist | Mpc.Subsystems.update |
-                                  Mpc.Subsystems.mixer | Mpc.Subsystems.options;
+                                  Mpc.Subsystems.mixer | Mpc.Subsystems.output | Mpc.Subsystems.options;
       if (m_Mpc.Commands().Contains("channels"))
         subsystems |= Mpc.Subsystems.message | Mpc.Subsystems.subscription;
       m_MpcIdle.Idle(subsystems);
@@ -360,6 +392,16 @@ namespace WpfMpdClient
         status = m_Mpc.Status();
       }catch{
         return;
+      }
+      if ((subsystems & Mpc.Subsystems.output) != 0) {
+        var os = m_Mpc.Outputs();
+        Outputs.Where(o => !os.Any(_ => _.Name == o.Name && ((o.IsEnabled = _.IsEnabled) || true))).ToList().Count(Outputs.Remove);
+        os.Where(o => o.Name != "Quiet" && !Outputs.Any(_ => _.Name == o.Name)).Select(o => new Output() {
+          Name = o.Name,
+          Id = o.Id,
+          IsEnabled = o.IsEnabled,
+          Mpc = m_Mpc,
+         }).Do(Outputs.Add);
       }
       if ((subsystems & Mpc.Subsystems.player) != 0 || (subsystems & Mpc.Subsystems.mixer) != 0 ||
           (subsystems & Mpc.Subsystems.options) != 0){
@@ -380,7 +422,11 @@ namespace WpfMpdClient
             {
               file.AlbumEntry = album = new ListboxEntry();
               album.Info = new ObservableCollection<object>();
-              FindInfo(album.Info, dir.Replace(file.File, "$1"), Dispatcher);
+              Action<IList<object>, string, System.Windows.Threading.Dispatcher> find = FindInfo;
+              find.BeginInvoke(
+                album.Info, dir.Replace(file.File, "$1"), Dispatcher,
+                find.EndInvoke, null
+              );
             }
           }
           playerControl.Update(status, file);          

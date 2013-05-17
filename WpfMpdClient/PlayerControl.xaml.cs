@@ -52,6 +52,8 @@ namespace WpfMpdClient
       m_Timer.Elapsed += TimerHandler;
     }
 
+    public ICollection<MainWindow.Output> Outputs { set { lstOutputs.DataContext = value; } }
+
     public Mpc Mpc
     {
       get;

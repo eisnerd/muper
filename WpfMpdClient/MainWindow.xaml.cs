@@ -550,7 +550,7 @@ namespace WpfMpdClient
       artists.Sort();
       for (int i = 0; i < artists.Count; i++) {
         if (string.IsNullOrEmpty(artists[i]))
-          artists[i] = Mpc.NoArtist;
+          continue;
         ListboxEntry entry = new ListboxEntry() { Type = ListboxEntry.EntryType.Artist, 
                                                   Artist = artists[i] };
         m_ArtistsSource.Add(entry);

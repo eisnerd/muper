@@ -57,10 +57,10 @@ namespace Libmpc
       All = 0x7fffffff,
     }
 
-    public const string NoArtist = "<No Artist>";
-    public const string NoAlbum = "<No Album>";
+    public const string NoArtist = "<No Composer>";
+    public const string NoAlbum = "<No Work>";
     public const string NoTitle = "<No Title>";
-    public const string NoGenre = "<No Genre>";
+    public const string NoGenre = "<No Performer>";
 
     private const string TAG_ANY = "any";
     private const string TAG_FILENAME = "filename";

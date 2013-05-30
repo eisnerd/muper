@@ -40,6 +40,105 @@ namespace WpfMpdClient
 {
   public static class Utilities
   {
+    public class VersionComparer : IComparer<string>
+    {
+        /* states: S_N: normal, S_I: comparing integral part, S_F: comparing
+                   fractionnal parts, S_Z: idem but with leading Zeroes only */
+        enum S : byte
+        {
+            Normal = 0x0,
+            Integral = 0x3,
+            Fractional = 0x6,
+            Zeros = 0x9,
+        }
+
+        /* result_type: CMP: return diff; LEN: compare using len_diff/diff */
+        enum R : sbyte
+        {
+            BFR = -1,
+            AFT = +1,
+            CMP = 2,
+            LEN = 3,
+        }
+
+        /* Symbol(s)    0       [1-9]   others
+           Transition   (10) 0  (01) d  (00) x   */
+        static readonly S[] next_state =
+        {
+            /* state          x         d             0  */
+            /* Normal */      S.Normal, S.Integral,   S.Zeros,
+            /* Integral */    S.Normal, S.Integral,   S.Integral,
+            /* Fractional */  S.Normal, S.Fractional, S.Fractional,
+            /* Zeros */       S.Normal, S.Fractional, S.Zeros,
+        };
+
+        static readonly R[] result_type =
+        {
+            /* state          x/x    x/d    x/0    d/x    d/d    d/0    0/x    0/d    0/0  */
+
+            /* Normal */      R.CMP, R.CMP, R.CMP, R.CMP, R.LEN, R.CMP, R.CMP, R.CMP, R.CMP,
+            /* Integral */    R.CMP, R.BFR, R.BFR, R.AFT, R.LEN, R.LEN, R.AFT, R.LEN, R.LEN,
+            /* Fractional */  R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP,
+            /* Zeros */       R.CMP, R.AFT, R.AFT, R.BFR, R.CMP, R.CMP, R.BFR, R.CMP, R.CMP,
+        };
+
+        /* Compare S1 and S2 as strings holding indices/version numbers,
+           returning less than, equal to or greater than zero if S1 is less than,
+           equal to or greater than S2 (for more info, see the texinfo doc).
+        */
+
+        public static int strverscmp(string s1, string s2)
+        {
+            if (object.ReferenceEquals(s1, s2))
+                return 0;
+
+            const byte O = (byte)1;
+            const byte Z = (byte)0;
+
+            int p1 = 0, p2 = 0;
+
+            char c1 = s1[p1++];
+            char c2 = s2[p2++];
+            /* Hint: '0' is a digit too.  */
+            int state = (byte)S.Normal + (c1 == '0' ? O : Z) + (char.IsDigit(c1) ? O : Z);
+
+            int diff;
+            while ((diff = c1 - c2) == 0)
+            {
+                if (c1 == '\0')
+                    return diff;
+
+                state = (byte)next_state[state];
+                c1 = p1 < s1.Length ? s1[p1++] : '\0';
+                c2 = p2 < s2.Length ? s2[p2++] : '\0';
+                state += (c1 == '0' ? O : Z) + (char.IsDigit(c1) ? O : Z);
+            }
+
+            switch (result_type[state * 3 + (((c2 == '0' ? O : Z) + (char.IsDigit(c2) ? O : Z)))])
+            {
+                case R.CMP:
+                    return diff;
+
+                case R.LEN:
+                    while (char.IsDigit(s1, p1++))
+                        if (!char.IsDigit(s2, p2++))
+                            return 1;
+
+                    return char.IsDigit(s2, p2) ? -1 : diff;
+
+                default:
+                    return state;
+            }
+        }
+
+        public int Compare(string x, string y)
+        {
+            return string.IsNullOrEmpty(x) ? string.IsNullOrEmpty(y) ? 0 : -1 : string.IsNullOrEmpty(y) ? +1 : strverscmp(x ?? "", y ?? "");
+        }
+
+        public static readonly VersionComparer Instance = new VersionComparer();
+    }
+
     public static IEnumerable<T> Do<T>(this IEnumerable<T> ts, Action<T> a)
     {
       if (ts != null)

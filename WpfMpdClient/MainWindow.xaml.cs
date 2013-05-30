@@ -670,21 +670,23 @@ namespace WpfMpdClient
 
     private void treeFileSystem_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
-      TreeViewItem treeItem = treeFileSystem.SelectedItem as TreeViewItem;
-      if (treeItem != null){
-        MpdDirectoryListing list = null;
-        try{
-          list = m_Mpc.LsInfo(treeItem.Tag != null ? treeItem.Tag.ToString() : null);
-        }catch (Exception ex){
-          ShowException(ex);
-          return;
+        TreeViewItem treeItem = treeFileSystem.SelectedItem as TreeViewItem;
+        if (treeItem != null)
+        {
+            try
+            {
+                lstTracks.ItemsSource = m_Mpc
+                    .LsInfo(treeItem.Tag != null ? treeItem.Tag.ToString() : null)
+                    .FileList
+                    .OrderBy(m => m.Disc).ThenBy(m => m.TrackNo).ThenBy(m => m.Title, Utilities.VersionComparer.Instance)
+                    .ToList();
+                ScrollTracksToLeft();
+            }
+            catch (Exception ex)
+            {
+                ShowException(ex);
+            }
         }
-        m_Tracks = new List<MpdFile>();
-        foreach (MpdFile file in list.FileList)
-          m_Tracks.Add(file);
-        lstTracks.ItemsSource = m_Tracks;
-        ScrollTracksToLeft();
-      }
     }
 
     class Cancel
@@ -951,7 +953,7 @@ namespace WpfMpdClient
           m_Tracks.Do(m => m.AlbumEntry = album);
           var selection = m_Tracks.ToDictionary(m => m.File);
           var all = m_Tracks
-            .OrderBy(m => m.Disc * 1000 + m.TrackNo)
+            .OrderBy(m => m.Disc).ThenBy(m => m.TrackNo).ThenBy(m => m.Title, Utilities.VersionComparer.Instance)
             .GroupBy(m => dir.Replace(m.File, "$1"))
             .Where(g => {
               if (album != null && album.Album != "Misc")
@@ -960,7 +962,7 @@ namespace WpfMpdClient
             })
             .SelectMany(Utilities.Try<IGrouping<string, MpdFile>, IEnumerable<MpdFile>>(g =>
               m_Mpc.ListAllInfo(g.Key)
-                .OrderBy(m => m.Disc * 1000 + m.TrackNo)
+                .OrderBy(m => m.Disc).ThenBy(m => m.TrackNo).ThenBy(m => m.Title, Utilities.VersionComparer.Instance)
                 .Where(m => (m.Supplement = !selection.Remove(m.File)) || true)
             ))
             .ToList();

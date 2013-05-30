@@ -422,9 +422,9 @@ namespace WpfMpdClient
             {
               file.AlbumEntry = album = new ListboxEntry();
               album.Info = new ObservableCollection<object>();
-              Action<IList<object>, string, System.Windows.Threading.Dispatcher> find = FindInfo;
+              Action<IList<object>, string, int, System.Windows.Threading.Dispatcher> find = FindInfo;
               find.BeginInvoke(
-                album.Info, dir.Replace(file.File, "$1"), Dispatcher,
+                album.Info, dir.Replace(file.File, "$1"), 5, Dispatcher,
                 find.EndInvoke, null
               );
             }
@@ -957,7 +957,7 @@ namespace WpfMpdClient
             .GroupBy(m => dir.Replace(m.File, "$1"))
             .Where(g => {
               if (album != null && album.Album != "Misc")
-                FindInfo(album.Info, g.Key, Dispatcher);
+                FindInfo(album.Info, g.Key, 20, Dispatcher);
               return true;
             })
             .SelectMany(Utilities.Try<IGrouping<string, MpdFile>, IEnumerable<MpdFile>>(g =>
@@ -1012,13 +1012,13 @@ namespace WpfMpdClient
       }
     }
 
-    public static void FindInfo(IList<object> info, string dir, System.Windows.Threading.Dispatcher Dispatcher)
+    public static void FindInfo(IList<object> info, string dir, int limit, System.Windows.Threading.Dispatcher Dispatcher)
     {
       if (info != null && info.Count == 0)
         ArtDownloader.Listing(dir,
           x => x.EndsWith("pdf") || x.EndsWith("html") || x.EndsWith("txt"),
           us => (Dispatcher).BeginInvoke((System.Action)(() => {
-            us.GroupBy(u => Path.GetFileNameWithoutExtension(u.LocalPath)).Do(x => {
+            us.GroupBy(u => Path.GetFileNameWithoutExtension(u.LocalPath)).Take(limit).Do(x => {
               var u = x.FirstOrDefault(y => y.LocalPath.ToLower().Contains("pdf")) ?? x.FirstOrDefault();
               var p = (u.Segments.LastOrDefault() ?? "").ToLower();
               info.Add(new {

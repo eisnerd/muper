@@ -1,4 +1,4 @@
-IF [%HOME%] == [] SET HOME=C:\dev\cygwin\home\mbrxhee2
+IF [%HOME%] == [] SET HOME=C:\dev\cygwin\home\Administrator
 cd %HOME%\build\wpfmpdclient
 git fetch origin
 git checkout -b auto1 origin/master

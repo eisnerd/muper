@@ -3,20 +3,16 @@
 <a href="http://www.jetbrains.com/teamcity" title="TeamCity by JetBrains" style="margin:0 0 0 400px;padding:60px 0 2px 0;font-size:14px; background-image:none;border:0;display:block; color: #acc4f9; font-family: trebuchet ms,arial,sans-serif;font-weight: normal;text-align:left;">continuous integration server</a>
 </div>
 
-Muper
-Copyright � Paolo Iommarini 2012
---------------------------------
 
-Muper, forked from WpfMpdClient, is a client for the MPD music playing server, developed using C# and WPF.
+# Muper
+Copyright &copy; Paolo Iommarini 2012
 
-MPD homepage: 
-http://mpd.wikia.com/wiki/Music_Player_Daemon_Wiki
+Forked from WpfMpdClient, this is a client for the [http://www.musicpd.org/|MPD] music playing server, developed using C# and WPF.
 
-Featues:
-- Browse database
+- Browse the database
 - Browse saved playlists
-- Lyrics
-- last.fm scrobbler
+- View lyrics
+- Scrobble last.fm
 - Download album art from last.fm
-- Tray icon with popup on track change
-- Support multimedia keys (play, pause, next track, previous track)
+- Watch popups on track change by the tray icon
+- Use multimedia keys (play, pause, next track, previous track)

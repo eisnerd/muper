@@ -47,9 +47,9 @@ namespace WpfMpdClient
         enum S : byte
         {
             Normal = 0x0,
-            Integral = 0x3,
-            Fractional = 0x6,
-            Zeros = 0x9,
+            Integral = 0x4,
+            Fractional = 0x8,
+            Zeros = 0xC,
         }
 
         /* result_type: CMP: return diff; LEN: compare using len_diff/diff */
@@ -65,21 +65,21 @@ namespace WpfMpdClient
            Transition   (10) 0  (01) d  (00) x   */
         static readonly S[] next_state =
         {
-            /* state          x         d             0  */
-            /* Normal */      S.Normal, S.Integral,   S.Zeros,
-            /* Integral */    S.Normal, S.Integral,   S.Integral,
-            /* Fractional */  S.Normal, S.Fractional, S.Fractional,
-            /* Zeros */       S.Normal, S.Fractional, S.Zeros,
+            /* state          x         d             0             -            */
+            /* Normal */      S.Normal, S.Integral,   S.Zeros,      S.Normal,
+            /* Integral */    S.Normal, S.Integral,   S.Integral,   S.Integral,
+            /* Fractional */  S.Normal, S.Fractional, S.Fractional, S.Fractional,
+            /* Zeros */       S.Normal, S.Fractional, S.Zeros,      S.Zeros,
         };
 
         static readonly R[] result_type =
         {
-            /* state          x/x    x/d    x/0    d/x    d/d    d/0    0/x    0/d    0/0  */
+            /* state          x/x    x/d    x/0    x/-    d/x    d/d    d/0    d/-    0/x    0/d    0/0    0/-    -/x    -/d    -/0    -/-  */
 
-            /* Normal */      R.CMP, R.CMP, R.CMP, R.CMP, R.LEN, R.CMP, R.CMP, R.CMP, R.CMP,
-            /* Integral */    R.CMP, R.BFR, R.BFR, R.AFT, R.LEN, R.LEN, R.AFT, R.LEN, R.LEN,
-            /* Fractional */  R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP,
-            /* Zeros */       R.CMP, R.AFT, R.AFT, R.BFR, R.CMP, R.CMP, R.BFR, R.CMP, R.CMP,
+            /* Normal */      R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.LEN, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP,
+            /* Integral */    R.CMP, R.BFR, R.BFR, R.CMP, R.AFT, R.LEN, R.LEN, R.CMP, R.AFT, R.LEN, R.LEN, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP,
+            /* Fractional */  R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP,
+            /* Zeros */       R.CMP, R.AFT, R.AFT, R.CMP, R.BFR, R.CMP, R.CMP, R.CMP, R.BFR, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP, R.CMP,
         };
 
         /* Compare S1 and S2 as strings holding indices/version numbers,
@@ -95,39 +95,40 @@ namespace WpfMpdClient
             const byte O = (byte)1;
             const byte Z = (byte)0;
 
+            int l1 = s1.Length;
+            int l2 = s2.Length;
+
             int p1 = 0, p2 = 0;
 
             char c1 = s1[p1++];
             char c2 = s2[p2++];
             /* Hint: '0' is a digit too.  */
-            int state = (byte)S.Normal + (c1 == '0' ? O : Z) + (char.IsDigit(c1) ? O : Z);
+            int state = (byte)S.Normal | (c1 == '0' ? O : Z) + (char.IsDigit(c1) ? O : Z);
 
             int diff;
-            while ((diff = c1 - c2) == 0)
+            while ((diff = c1 - c2) == 0 && c1 != '\0')
             {
-                if (c1 == '\0')
-                    return diff;
-
-                state = (byte)next_state[state];
-                c1 = p1 < s1.Length ? s1[p1++] : '\0';
-                c2 = p2 < s2.Length ? s2[p2++] : '\0';
-                state += (c1 == '0' ? O : Z) + (char.IsDigit(c1) ? O : Z);
+                state = (int)next_state[state];
+                c1 = p1 < l1 ? s1[p1++] : '\0';
+                c2 = p2 < l2 ? s2[p2++] : '\0';
+                state |= (c1 == '0' ? O : Z) + (char.IsDigit(c1) ? O : Z);
             }
 
-            switch (result_type[state * 3 + (((c2 == '0' ? O : Z) + (char.IsDigit(c2) ? O : Z)))])
+            R result = result_type[(state << 2) | ((c2 == '0' ? O : Z) + (char.IsDigit(c2) ? O : Z))];
+            switch (result)
             {
                 case R.CMP:
                     return diff;
 
                 case R.LEN:
-                    while (char.IsDigit(s1, p1++))
-                        if (!char.IsDigit(s2, p2++))
+                    while (p1 < l1 && char.IsDigit(s1, p1++))
+                        if (!(p2 < l2 && char.IsDigit(s2, p2++)))
                             return 1;
 
-                    return char.IsDigit(s2, p2) ? -1 : diff;
+                    return p2 < l2 && char.IsDigit(s2, p2) ? -1 : diff;
 
                 default:
-                    return state;
+                    return (int)result;
             }
         }
 

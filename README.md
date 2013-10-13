@@ -7,7 +7,7 @@
 # Muper
 Copyright &copy; Paolo Iommarini 2012
 
-Forked from WpfMpdClient, this is a client for the [[http://www.musicpd.org/|MPD]] music playing server, developed using C# and WPF.
+Forked from WpfMpdClient, this is a client for the [MPD](http://www.musicpd.org/) music playing server, developed using C# and WPF.
 
 - Browse the database
 - Browse saved playlists

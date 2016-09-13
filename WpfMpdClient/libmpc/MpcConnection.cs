@@ -147,9 +147,10 @@ namespace Libmpc
           this.ipEndPoint.Port);
       this.tcpClient.ReceiveBufferSize = 32768;
       this.networkStream = this.tcpClient.GetStream();
-      
-      this.reader = new StreamReader(this.networkStream, Encoding.UTF8);
-      this.writer = new StreamWriter(this.networkStream, Encoding.UTF8);
+
+      var utf8 = new UTF8Encoding(false);
+      this.reader = new StreamReader(this.networkStream, utf8);
+      this.writer = new StreamWriter(this.networkStream, utf8);
       this.writer.NewLine = "\n";
 
       string firstLine = this.reader.ReadLine();
@@ -158,11 +159,6 @@ namespace Libmpc
         throw new InvalidDataException("Response of mpd does not start with \"" + FIRST_LINE_PREFIX + "\".");
       }
       this.version = firstLine.Substring(FIRST_LINE_PREFIX.Length);
-
-      this.writer.WriteLine();
-      this.writer.Flush();
-
-      this.readResponse();
 
       MpdResponse response = Exec("commands");
       m_Commands = response.getValueList();

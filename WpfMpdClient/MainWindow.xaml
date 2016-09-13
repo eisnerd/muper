@@ -980,12 +980,6 @@
                         <ComboBoxItem>Turkish</ComboBoxItem>
                     </ComboBox>
 
-                    <Label VerticalContentAlignment="Center" Grid.Row="10" Content="Playlist style:" />
-                    <ComboBox Grid.Row="10" Grid.Column="1" Margin="2" Name="cmbPlaylistStyle">
-                        <ComboBoxItem>Columns</ComboBoxItem>
-                        <ComboBoxItem>Single column</ComboBoxItem>
-                    </ComboBox>
-
                     <Button Margin="2" Grid.Row="11" Name="btnApplySettings" Content="Apply" Click="btnApplySettings_Click"/>
                     <Button Margin="2" Grid.Row="12" Name="btnCheckUpdates" Content="Check for updates" Click="btnCheckUpdates_Click"/>
                 </Grid>

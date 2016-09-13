@@ -162,7 +162,7 @@ namespace WpfMpdClient
 
         void GongSolutions.Wpf.DragDrop.IDragSource.Dropped(GongSolutions.Wpf.DragDrop.IDropInfo dropInfo)
         {
-            
+
         }
 
         void GongSolutions.Wpf.DragDrop.IDragSource.StartDrag(GongSolutions.Wpf.DragDrop.IDragInfo dragInfo)
@@ -183,7 +183,7 @@ namespace WpfMpdClient
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
           }
-          
+
           bool vis;
           public bool Visible { set { vis = value; NotifyPropertyChanged("Show"); NotifyPropertyChanged("Hide"); NotifyPropertyChanged("Size"); } }
           public Visibility Show { get { return vis ? Visibility.Visible : Visibility.Collapsed; } }
@@ -221,7 +221,7 @@ namespace WpfMpdClient
       stcAbout.DataContext = m_About;
       try {
         txtLicense.Text = File.ReadAllText("LICENSE.TXT");
-      } catch (Exception){ 
+      } catch (Exception){
         txtLicense.Text = "LICENSE not found!!!";
       }
 
@@ -240,7 +240,6 @@ namespace WpfMpdClient
         cmbLastFmLang.SelectedIndex = m_Languages.IndexOf(m_Settings.InfoLanguage);
         if (cmbLastFmLang.SelectedIndex == -1)
           cmbLastFmLang.SelectedIndex = 0;
-        cmbPlaylistStyle.SelectedIndex = m_Settings.StyledPlaylist ? 1 : 0;
 
         chkTray_Changed(null, null);
 
@@ -282,8 +281,8 @@ namespace WpfMpdClient
       tabFileSystem.Visibility = m_Settings.ShowFilesystemTab ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
       playerControl.ShowStopButton = m_Settings.ShowStopButton;
       playerControl.Mpc = m_Mpc;
-      lstPlaylist.Visibility = m_Settings.StyledPlaylist ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
-      lstPlaylistStyled.Visibility = m_Settings.StyledPlaylist ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      lstPlaylist.Visibility = System.Windows.Visibility.Collapsed;
+      lstPlaylistStyled.Visibility = System.Windows.Visibility.Visible;
 
       m_NotifyIcon = new System.Windows.Forms.NotifyIcon();
       m_NotifyIcon.Icon = new System.Drawing.Icon("mpd_icon.ico", new System.Drawing.Size(32,32));
@@ -298,10 +297,12 @@ namespace WpfMpdClient
         m_StartTimer.Start();
       }
 
+#if !DEBUG
       m_Updater = new Updater(new Uri("http://www.sakya.it/updater/updater.php"), "WpfMpdClient", "Windows");
       m_Updater.AppCurrentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
       m_Updater.CheckCompletedDelegate += CheckCompleted;
       m_Updater.Check();
+#endif
 
       lstArtist.ItemsSource = m_ArtistsSource;
       Type t = typeof(ListboxEntry);
@@ -320,7 +321,7 @@ namespace WpfMpdClient
       PropertyGroupDescription group = new PropertyGroupDescription("Channel");
       view.GroupDescriptions.Add(group);
 
-      m_ArtDownloader.Start();      
+      m_ArtDownloader.Start();
       txtStatus.Text = "Not connected";
       context.View = false;
       lstArtist.Focus();
@@ -429,7 +430,7 @@ namespace WpfMpdClient
               );
             }
           }
-          playerControl.Update(status, file);          
+          playerControl.Update(status, file);
           if (m_MiniPlayer != null)
             m_MiniPlayer.Update(status, file);
 
@@ -482,12 +483,12 @@ namespace WpfMpdClient
         tabMessages.Visibility = System.Windows.Visibility.Collapsed;
 
       txtStatus.Text = string.Format("Connected to {0}:{1} [MPD v.{2}]", m_Settings.ServerAddress, m_Settings.ServerPort, m_Mpc.Connection.Version);
-      MpdStatistics stats = m_Mpc.Stats();      
+      MpdStatistics stats = m_Mpc.Stats();
       PopulateGenres();
       PopulatePlaylists();
       PopulateFileSystemTree();
       PopulatePlaylist();
-      PopulateArtists();      
+      PopulateArtists();
     }
 
     private void MpcDisconnected(Mpc connection)
@@ -551,7 +552,7 @@ namespace WpfMpdClient
       for (int i = 0; i < artists.Count; i++) {
         if (string.IsNullOrEmpty(artists[i]))
           continue;
-        ListboxEntry entry = new ListboxEntry() { Type = ListboxEntry.EntryType.Artist, 
+        ListboxEntry entry = new ListboxEntry() { Type = ListboxEntry.EntryType.Artist,
                                                   Artist = artists[i] };
         m_ArtistsSource.Add(entry);
       }
@@ -653,7 +654,7 @@ namespace WpfMpdClient
     private bool HasSubdirectories(string path)
     {
       MpdDirectoryListing list = m_Mpc.LsInfo(path);
-      return list.DirectoryList.Count > 0;      
+      return list.DirectoryList.Count > 0;
     }
 
     private void TreeItemExpanded(object sender, RoutedEventArgs e)
@@ -834,7 +835,7 @@ namespace WpfMpdClient
         return;
       }
       files.Sort(delegate(MpdFile p1, MpdFile p2)
-                 { 
+                 {
                    return string.Compare(p1.Album, p2.Album);
                  });
       MpdFile lastFile = null;
@@ -869,7 +870,7 @@ namespace WpfMpdClient
       ListBox list = sender as ListBox;
       if (list.SelectedItem != null) {
         string playlist = list.SelectedItem.ToString();
-        
+
         try{
           m_Tracks = m_Mpc.ListPlaylistInfo(playlist);
         }catch (Exception ex){
@@ -882,7 +883,7 @@ namespace WpfMpdClient
         m_Tracks = null;
         lstTracks.ItemsSource = null;
       }
-    } 
+    }
 
     private void lstTracks_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -925,7 +926,7 @@ namespace WpfMpdClient
           return;
         if (album != null) {
           album.Related.Do(r => r.Selected = true);
-          
+
           if (e != null) {
             var old = e.RemovedItems.OfType<ListboxEntry>().FirstOrDefault();
             if (old != null && !(album.Related != null && album.Related.Contains(old)))
@@ -1051,15 +1052,14 @@ namespace WpfMpdClient
       m_Settings.ShowMiniPlayer = chkShowMiniPlayer.IsChecked == true;
       m_Settings.Scrobbler = chkScrobbler.IsChecked == true;
       m_Settings.InfoLanguage = cmbLastFmLang.SelectedIndex < 0 ? m_Languages[0] : m_Languages[cmbLastFmLang.SelectedIndex];
-      m_Settings.StyledPlaylist = cmbPlaylistStyle.SelectedIndex == 1;
 
       m_Settings.Serialize(Settings.GetSettingsFileName());
 
       playerControl.ShowStopButton = m_Settings.ShowStopButton;
       tabFileSystem.Visibility = m_Settings.ShowFilesystemTab ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
 
-      lstPlaylist.Visibility = m_Settings.StyledPlaylist ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
-      lstPlaylistStyled.Visibility = m_Settings.StyledPlaylist ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+      lstPlaylist.Visibility = System.Windows.Visibility.Collapsed;
+      lstPlaylistStyled.Visibility = System.Windows.Visibility.Visible;
 
       m_IgnoreDisconnect = true;
       if (m_Mpc.Connected)
@@ -1152,7 +1152,7 @@ namespace WpfMpdClient
             m_Mpc.Add(f.File);
           }catch (Exception){}
         }
-      }        
+      }
       if (item.Name == "mnuAddReplacePlay"){
         try{
           m_Mpc.Play();
@@ -1160,7 +1160,7 @@ namespace WpfMpdClient
           ShowException(ex);
           return;
         }
-      }        
+      }
       if (item.Name == "mnuAddPlay"){
         try{
           if (last < 0)
@@ -1171,7 +1171,7 @@ namespace WpfMpdClient
           ShowException(ex);
           return;
         }
-      }        
+      }
 }
 
     private void TracksContextMenu_Click(object sender, RoutedEventArgs args)
@@ -1582,7 +1582,7 @@ namespace WpfMpdClient
       if (m_Settings.Scrobbler){
         if (m_CurrentTrack != null && m_CurrentTrack.Time >= 30){
           double played = (DateTime.Now - m_CurrentTrackStart).TotalSeconds;
-          if (played >= 240 || played >= m_CurrentTrack.Time / 2) 
+          if (played >= 240 || played >= m_CurrentTrack.Time / 2)
             m_LastfmScrobbler.Scrobble(m_CurrentTrack.Artist, m_CurrentTrack.Title, m_CurrentTrack.Album, m_CurrentTrackStart);
         }
 
@@ -1619,7 +1619,7 @@ namespace WpfMpdClient
     } // TrackChanged
 
     public void Quit()
-    {      
+    {
       m_NotifyIcon.Visible = false;
       m_Close = true;
       Application.Current.Shutdown();
@@ -1874,7 +1874,7 @@ namespace WpfMpdClient
       List<MpdChannel> NewChannels = new List<MpdChannel>();
       foreach (string c in channels) {
         MpdChannel ch = GetChannel(c);
-        NewChannels.Add(new MpdChannel() { Name = c, 
+        NewChannels.Add(new MpdChannel() { Name = c,
                                            Subscribed = ch != null ? ch.Subscribed : false });
       }
 
@@ -1917,7 +1917,7 @@ namespace WpfMpdClient
         }catch (Exception ex){
           ShowException(ex);
           return;
-        }        
+        }
         if (m_Mpc.ChannelSendMessage(channel, txtMessage.Text)) {
           m_Messages.Add(new MpdMessage() { Channel = channel, Message = txtMessage.Text, DateTime = DateTime.Now });
           txtMessage.Clear();
@@ -1930,7 +1930,7 @@ namespace WpfMpdClient
           Expander exp = GetExpander(channel);
           if (exp != null)
             exp.IsExpanded = true;
-        }      
+        }
       }
     }
 
@@ -1949,7 +1949,7 @@ namespace WpfMpdClient
         if (c.Name == name)
           return c;
       }
-      return null;       
+      return null;
     }
 
     private void Expander_Loaded(object sender, RoutedEventArgs e)
@@ -1982,7 +1982,7 @@ namespace WpfMpdClient
             ch.Subscribed = !ch.Subscribed;
         }
       }
-    }    
+    }
     #endregion
 
     private void Label_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

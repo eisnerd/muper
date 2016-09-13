@@ -12,7 +12,8 @@ CALL :LoCase HOST
 echo %HOST%
 git log|grep -q %HOST%
 if errorlevel 1 git cherry-pick paths-%HOST%
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild 
+nuget restore
+C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild
 xcopy /E /C /Y /I WpfMpdClient\bin\Debug WpfMpdClient\bin\Live
 cd WpfMpdClient\bin\Live\
 .\WpfMpdClient.exe
